@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "ball.h"
 #include "plane.h"
+#include "water.h"
 
 
 using namespace std;
@@ -16,6 +17,7 @@ GLFWwindow *window;
 
 //Ball ball1;
 Plane plane;
+Water water;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -32,8 +34,6 @@ void draw() {
     glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram (programID);
-
-    // glm::vec3 up (0, 1, 0);
 
     if(view==0) //follow cam
     {
@@ -62,8 +62,8 @@ void draw() {
     {
      
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 eye (3, 3, -10);
-        glm::vec3 up (2, 0, 1);
+        glm::vec3 eye (5, 5, 3);
+        glm::vec3 up (0, 0, 1);
         Matrices.view = glm::lookAt( eye, target, up );
 
     }
@@ -93,6 +93,8 @@ void draw() {
 
     // Scene render
     //ball1.draw(VP);
+   
+    water.draw(VP);
     plane.draw(VP);
 }
 
@@ -140,8 +142,9 @@ void initGL(GLFWwindow *window, int width, int height) {
     // Create the models
 
     //ball1       = Ball(0, 0, COLOR_RED);
+    water       = Water(0, 0, COLOR_WATER);
     plane       = Plane(0, 0, 0, COLOR_BLACK, COLOR_RED);
-
+    
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
