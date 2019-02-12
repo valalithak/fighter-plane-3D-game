@@ -19,11 +19,11 @@ Plane plane;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
-int view = 0;
+int view = 3;
 int score = 0;
-float cam_distance = 100;
+float cam_distance = 1; 
 float tilt_angle = 0;
-float angle = 30;
+//float angle = 90;
 
 Timer t60(1.0 / 60);
 
@@ -33,41 +33,48 @@ void draw() {
 
     glUseProgram (programID);
 
-    glm::vec3 up (0, 1, 0);
+    // glm::vec3 up (0, 1, 0);
 
-    if(view==0) // top view
+    if(view==0) //follow cam
     {
-        float r = cam_distance*cos(angle*M_PI/180.0f);
-        float angle = plane.rotation + tilt_angle;
-        glm::vec3 eye (plane.position.x - r*sin(angle*M_PI/180.0f) , plane.position.y + cam_distance*sin(angle*M_PI/180.0f), plane.position.z + r*cos(angle*M_PI/180.0f));
-        glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        Matrices.view = glm::lookAt( eye, target, up );
-        
+    
+      glm::vec3 eye ( plane.position.x, plane.position.y-8 , plane.position.z+3);
+      glm::vec3 target ( plane.position.x, plane.position.y, plane.position.z);
+      glm::vec3 up (0, 0, 1);
+      Matrices.view = glm::lookAt( eye, target, up );
+      
 
     }
 
     else if(view==1) // first person plane view
     {
-        glm::vec3 eye (plane.position.x, plane.position.y+5, plane.position.z);
-        glm::vec3 target (plane.position.x + 100*sin(plane.rotation*M_PI/180.0f), plane.position.y, plane.position.z - 100*cos(plane.rotation*M_PI/180.0f));
-        Matrices.view = glm::lookAt( eye, target, up ); 
+        float angle = 0*((plane.rotation-90)*3.14)/180;
+
+        glm::vec3 eye ( plane.position.x+2*sin(angle), plane.position.y+0.5 , plane.position.z+2*cos(angle));
+        glm::vec3 target ( plane.position.x, plane.position.y+1.2, plane.position.z+1);
+        glm::vec3 up (0, 1, 0);
+        Matrices.view = glm::lookAt( eye, target, up );
+
     }
 
 
     else if(view==2) // tower-view
     {
-
-        
+     
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 eye (10, 20, 3);
+        glm::vec3 eye (3, 3, -10);
+        glm::vec3 up (2, 0, 1);
         Matrices.view = glm::lookAt( eye, target, up );
+
     }
 
 
-    else if(view==3) // follow cam view
+    else if(view==3) // top view
     {
-        glm::vec3 eye (plane.position.x, plane.position.y-5, plane.position.z+0.6);
+        
+        glm::vec3 eye (plane.position.x, plane.position.y-1, plane.position.z-5);
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
+        glm::vec3 up (0, 1, 0);
         Matrices.view = glm::lookAt( eye, target, up ); 
         
     }
@@ -101,20 +108,21 @@ void tick_input(GLFWwindow *window) {
     int d = glfwGetKey(window, GLFW_KEY_D);
     int q = glfwGetKey(window, GLFW_KEY_Q);
     int t = glfwGetKey(window, GLFW_KEY_T);
-    if(t)
-    {
+    int zero = glfwGetKey(window, GLFW_KEY_0);
+    int one = glfwGetKey(window, GLFW_KEY_1);
+    int two = glfwGetKey(window, GLFW_KEY_2);
+    int three = glfwGetKey(window, GLFW_KEY_3);
+    if(three)
+        view = 3;
+    if(one)
+        view = 1;
+    if(two)
+        view = 2;
+    if(zero)
+        view = 0;
 
-            if(view==3)
-                view = 0;
-                
-            else if(view==2)
-                view = 3;
-            else if(view==1)
-                view = 2;
-            else if(view==0)
-                view = 1;
+
         
-    }
 }
 
 void tick_elements() {
@@ -198,5 +206,8 @@ void reset_screen() {
     float bottom = screen_center_y - 4 / screen_zoom;
     float left   = screen_center_x - 4 / screen_zoom;
     float right  = screen_center_x + 4 / screen_zoom;
-    Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
+    // Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
+    // Matrices.projection = glm::perspective(left, right, bottom, top);
+    Matrices.projection = glm::infinitePerspective(glm::radians(90.0f),2.0f,0.1f);
 }
+
