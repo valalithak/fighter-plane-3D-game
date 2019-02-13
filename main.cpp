@@ -44,7 +44,7 @@ void draw() {
         
       float angle = (plane.pitch*3.14)/180;
       
-      glm::vec3 eye ( plane.position.x-2*cos(angle), plane.position.y-8, plane.position.z*2*sin(angle) + 3 );
+      glm::vec3 eye ( plane.position.x-2*sin(angle), plane.position.y-8, plane.position.z*2*cos(angle) + 3 );
       
       glm::vec3 target ( plane.position.x, plane.position.y , plane.position.z);
       glm::vec3 up (0, 0, 1);
@@ -70,7 +70,7 @@ void draw() {
     {
      
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 eye (5, 5, 3);
+        glm::vec3 eye (5, 5, 1);
         glm::vec3 up (0, 0, 1);
         Matrices.view = glm::lookAt( eye, target, up );
 
@@ -101,9 +101,9 @@ void draw() {
 
     // Scene render
     //ball1.draw(VP);
-   
-    //water.draw(VP);
     plane.draw(VP);
+    water.draw(VP);
+   
 }
 
 void tick_input(GLFWwindow *window) {
@@ -134,6 +134,22 @@ void tick_input(GLFWwindow *window) {
         plane.pitch -= 1;
     if(right)
          plane.pitch += 1;
+    if (q) {
+        plane.roll += 1;
+    }
+
+    if (e) {
+        plane.roll -= 1;
+    }
+    if (!left and !right) {
+        if (plane.roll > 0) {
+            plane.roll--;
+        }
+        else if (plane.roll < 0) {
+            plane.roll++;
+        }
+    }
+
 
         
 }
@@ -154,7 +170,7 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     //ball1       = Ball(0, 0, COLOR_RED);
     water       = Water(0, 0, COLOR_WATER);
-    plane       = Plane(0, 0, 0, COLOR_RED, COLOR_RED);
+    plane       = Plane(0, 0,0, COLOR_RED, COLOR_RED);
     
 
     // Create and compile our GLSL program from the shaders

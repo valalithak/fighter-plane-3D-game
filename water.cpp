@@ -6,56 +6,49 @@ Water::Water(float x, float y, color_t color) {
     this->rotation = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 0.5 triangles each, so this makes 6*0.5=110 triangles, and 110*3 vertices
+    GLfloat w = 10000;
+    GLfloat zn = -10.0f;
+    GLfloat zf = -10000.0f;
     static const GLfloat vertex_buffer_data[] = {
+        // top
+        -w, -w, zn,
+         w, -w, zn,
+         w, w, zn,
 
-    -10000,-0.5,-10000, // triangle 1 : begin
-    -10000,-0.5, 10000,
-    -10000, 0.5, 10000, // triangle 1 : end
+         -w, -w, zn,
+         -w, w, zn, 
+         w, w, zn,
+        // bottom
+          -w, -w, zf,
+         w, -w, zf,
+         w, w, zf,
 
-    10000, 0.5,-10000, // triangle 0.5 : begin
-    -10000,-0.5,-10000,
-    -10000, 0.5,-10000, // triangle 0.5 : end
+         -w, -w, zf,
+         -w, w, zf, 
+         w, w, zf,
 
-    10000,-0.5, 10000,
-    -10000,-0.5,-10000,
-    10000,-0.5,-10000,
+         // left
+         -w, w, zn,
+         -w, w, zf,
+         -w, -w, zn,
 
-    10000, 0.5,-10000,
-    10000,-0.5,-10000,
-    -10000,-0.5,-10000,
+         -w, -w, zn
+         -w, -w, zf,
+         -w, w, zf, 
 
-    -10000,-0.5,-10000,
-    -10000, 0.5, 10000,
-    -10000, 0.5,-10000,
+         // right
+         w, w, zn,
+         w, w, zf,
+         w, -w, zn,
 
-    10000,-0.5, 10000,
-    -10000,-0.5, 10000,
-    -10000,-0.5,-10000,
+         w, -w, zn,
+         w, -w, zf,
+         w, w, zf, 
 
-    -10000, 0.5, 10000,
-    -10000,-0.5, 10000,
-    10000,-0.5, 10000,
 
-    10000, 0.5, 10000,
-    10000,-0.5,-10000,
-    10000, 0.5,-10000,
 
-    10000,-0.5,-10000,
-    10000, 0.5, 10000,
-    10000,-0.5, 10000,
 
-    10000, 0.5, 10000,
-    10000, 0.5,-10000,
-    -10000, 0.5,-10000,
-
-    10000, 0.5, 10000,
-    -10000, 0.5,-10000,
-    -10000, 0.5, 10000,
-
-    10000, 0.5, 10000,
-    -10000, 0.5, 10000,
-    10000,-0.5, 10000
-
+    
     };
 
     this->object = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data, color, GL_FILL);
