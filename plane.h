@@ -10,6 +10,9 @@ public:
     Plane(float x, float y, float z, color_t color, color_t color2);
     glm::vec3 position;
     float rotation;
+    float roll;
+    float pitch;
+    float yaw;
     void draw(glm::mat4 VP);
     void set_position(float x, float y, float z);
     void tick();

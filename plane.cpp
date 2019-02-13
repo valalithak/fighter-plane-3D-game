@@ -4,6 +4,9 @@
 Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
     this->position = glm::vec3(x, y, z);
     this->rotation = 0;
+    this->roll = 0;
+    this->pitch - 0;
+    this->yaw = 0;
     this->speed = 1;
     this->acc_g = 0.1f;
     this->health = 100;
