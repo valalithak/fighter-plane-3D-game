@@ -51,7 +51,7 @@ Water::Water(float x, float y, color_t color) {
     
     };
 
-    this->object = create3DObject(GL_TRIANGLES, 36, vertex_buffer_data, color, GL_FILL);
+    this->object = create3DObject(GL_TRIANGLES, 18, vertex_buffer_data, color, GL_FILL);
 }
 
 void Water::draw(glm::mat4 VP) {

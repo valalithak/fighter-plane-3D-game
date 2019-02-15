@@ -3,7 +3,7 @@
 #include "ball.h"
 #include "plane.h"
 #include "water.h"
-
+#include "obstacle.h"
 
 using namespace std;
 
@@ -18,17 +18,12 @@ GLFWwindow *window;
 //Ball ball1;
 Plane plane;
 Water water;
+Obstacle obs[10];
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 3;
 int score = 0;
-float cam_distance = 1; 
-float tilt_angle = 0;
-//float angle = 90;
-
-
-
 
 Timer t60(1.0 / 60);
 
@@ -44,10 +39,10 @@ void draw() {
         
       float angle = (plane.pitch*3.14)/180;
       
-      glm::vec3 eye ( plane.position.x-2*sin(angle), plane.position.y-8, plane.position.z*2*cos(angle) + 3 );
+      glm::vec3 eye ( plane.position.x-2*sin(angle), plane.position.y-15, plane.position.z + 2*cos(angle)+1);
       
       glm::vec3 target ( plane.position.x, plane.position.y , plane.position.z);
-      glm::vec3 up (0, 0, 1);
+      glm::vec3 up (0, 1, 0);
       Matrices.view = glm::lookAt( eye, target, up );
       
 
@@ -70,7 +65,7 @@ void draw() {
     {
      
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 eye (5, 5, 1);
+        glm::vec3 eye (3, 3, 3);
         glm::vec3 up (0, 0, 1);
         Matrices.view = glm::lookAt( eye, target, up );
 
@@ -80,7 +75,7 @@ void draw() {
     else if(view==3) // top view
     {
         
-        glm::vec3 eye (plane.position.x, plane.position.y-1, plane.position.z-5);
+        glm::vec3 eye (plane.position.x, plane.position.y, plane.position.z-5);
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
         glm::vec3 up (0, 1, 0);
         Matrices.view = glm::lookAt( eye, target, up ); 
@@ -103,6 +98,8 @@ void draw() {
     //ball1.draw(VP);
     plane.draw(VP);
     water.draw(VP);
+    for(int i=0; i<10; i++)
+    obs[i].draw(VP);
    
 }
 
@@ -149,6 +146,16 @@ void tick_input(GLFWwindow *window) {
             plane.roll++;
         }
     }
+    if (up) {
+        plane.position.z += 0.05;
+       
+    }
+
+    if (down) {
+        plane.position.z -= 0.05;
+        
+    }
+
 
 
         
@@ -160,6 +167,9 @@ void tick_elements() {
       //  quit(window);
     //}
     plane.tick();
+    for(int i=0; i<10; i++)
+        obs[i].position.y = water.position.y;
+   
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -170,9 +180,11 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     //ball1       = Ball(0, 0, COLOR_RED);
     water       = Water(0, 0, COLOR_WATER);
-    plane       = Plane(0, 0,0, COLOR_RED, COLOR_RED);
-    
-
+    plane       = Plane(0, 0, 0, COLOR_RED, COLOR_RED);
+    for(int i=0; i<10; i++)
+    {
+        obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GREEN);
+    }
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
     // Get a handle for our "MVP" uniform
