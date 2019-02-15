@@ -18,7 +18,7 @@ GLFWwindow *window;
 //Ball ball1;
 Plane plane;
 Water water;
-Obstacle obs[10];
+Obstacle obs[20];
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -98,7 +98,7 @@ void draw() {
     //ball1.draw(VP);
     plane.draw(VP);
     water.draw(VP);
-    for(int i=0; i<10; i++)
+    for(int i=0; i<20; i++)
     obs[i].draw(VP);
    
 }
@@ -146,14 +146,16 @@ void tick_input(GLFWwindow *window) {
             plane.roll++;
         }
     }
-    if (up) {
+    if (w)
         plane.position.z += 0.05;
        
+    if (a) {
+        plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
+        plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
     }
-
-    if (down) {
-        plane.position.z -= 0.05;
-        
+    if (d) {
+        plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
+        plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
     }
 
 
@@ -167,8 +169,9 @@ void tick_elements() {
       //  quit(window);
     //}
     plane.tick();
-    for(int i=0; i<10; i++)
-        obs[i].position.y = water.position.y;
+    cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
+    cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
+    cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
    
 }
 
@@ -184,6 +187,10 @@ void initGL(GLFWwindow *window, int width, int height) {
     for(int i=0; i<10; i++)
     {
         obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GREEN);
+    }
+    for(int i=10; i<20; i++)
+    {
+        obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GREEN);
     }
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
