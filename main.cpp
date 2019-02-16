@@ -3,6 +3,7 @@
 #include "ball.h"
 #include "plane.h"
 #include "water.h"
+#include "score.h"
 #include "obstacle.h"
 
 using namespace std;
@@ -19,12 +20,13 @@ GLFWwindow *window;
 Plane plane;
 Water water;
 Obstacle obs[20];
+Score sc[3];
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 3;
-int score = 0;
-
+int score = 89;
+int scu, sct, sch;
 Timer t60(1.0 / 60);
 
 void draw() {
@@ -100,6 +102,12 @@ void draw() {
     water.draw(VP);
     for(int i=0; i<20; i++)
     obs[i].draw(VP);
+    if(view==0)
+    {
+        sc[0].draw(VP);
+        sc[1].draw(VP);
+        sc[2].draw(VP);
+    }
    
 }
 
@@ -146,16 +154,34 @@ void tick_input(GLFWwindow *window) {
             plane.roll++;
         }
     }
-    if (w)
+    if (w){
         plane.position.z += 0.05;
+        sc[0].position.z = plane.position.z;
+        sc[1].position.z = plane.position.z;
+        sc[2].position.z = plane.position.z;
+    }
        
     if (a) {
         plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
         plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        sc[0].position.x = plane.position.x;
+        sc[0].position.z = plane.position.z;
+        sc[1].position.x = sc[0].position.x - 1;
+        sc[1].position.z = sc[0].position.z;
+        sc[2].position.x = sc[1].position.x - 1;
+        sc[2].position.z = sc[1].position.z;
+
+
     }
     if (d) {
         plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
         plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        sc[0].position.x = plane.position.x;
+        sc[0].position.z = plane.position.z;
+        sc[1].position.x = sc[0].position.x - 1;
+        sc[1].position.z = sc[0].position.z;
+        sc[2].position.x = sc[1].position.x - 1;
+        sc[2].position.z = sc[1].position.z;
     }
 
 
@@ -172,6 +198,13 @@ void tick_elements() {
     cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
     cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
     cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
+    scu = score%10;
+    sct = (score/10)%10;
+    sch = (score/100)%10; 
+    sc[0].val = scu;
+    sc[1].val = sct;
+    sc[2].val = sch;
+    
    
 }
 
@@ -192,6 +225,9 @@ void initGL(GLFWwindow *window, int width, int height) {
     {
         obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GREEN);
     }
+    sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
+    sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
+    sc[2]       = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
     // Get a handle for our "MVP" uniform
