@@ -6,6 +6,8 @@
 #include "score.h"
 #include "obstacle.h"
 #include "bomb.h"
+#include "fuel.h"
+
 using namespace std;
 
 GLMatrices Matrices;
@@ -22,12 +24,15 @@ Water water;
 Obstacle obs[20];
 Score sc[3];
 Bomb bomb;
+Fuel fuel_bar;
+
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
 int score = plane.speed*100 +10;
 int scu, sct, sch;
+int fuel = 2000;
 Timer t60(1.0 / 60);
 
 void draw() {
@@ -108,11 +113,13 @@ void draw() {
         sc[0].draw(VP);
         sc[1].draw(VP);
         sc[2].draw(VP);
+        fuel_bar.draw(VP);
     }
     if(bomb.appear) 
         bomb.draw(VP);
     if(view!=1)
          plane.draw(VP);
+    
 }
 
 void tick_input(GLFWwindow *window) {
@@ -154,6 +161,10 @@ void tick_input(GLFWwindow *window) {
         sc[0].position.z = plane.position.z;
         sc[1].position.z = plane.position.z;
         sc[2].position.z = plane.position.z;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+
     }
        
     if (a) {
@@ -165,6 +176,9 @@ void tick_input(GLFWwindow *window) {
         sc[1].position.z = sc[0].position.z;
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
 
 
     }
@@ -177,6 +191,10 @@ void tick_input(GLFWwindow *window) {
         sc[1].position.z = sc[0].position.z;
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+
     }
     
     if(t)
@@ -192,6 +210,10 @@ void tick_input(GLFWwindow *window) {
         sc[0].position.y = plane.position.y - 5;
         sc[1].position.y = plane.position.y - 5;
         sc[2].position.y = plane.position.y - 5;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+
 
     }
 
@@ -201,9 +223,9 @@ void tick_input(GLFWwindow *window) {
 
 void tick_elements() {
     
-    //if(plane.health<=0.0) {
-      //  quit(window);
-    //}
+    // if(fuel<=0.0) {
+    //     quit(window);
+    // }
     plane.tick();
     cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
     cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
@@ -219,6 +241,13 @@ void tick_elements() {
     sc[0].val = scu;
     sc[1].val = sct;
     sc[2].val = sch;
+    fuel -= 0.01;
+    fuel_bar.f = fuel;
+
+    fuel_bar.position.x = sc[1].position.x;
+    fuel_bar.position.y = sc[1].position.y -2;
+    fuel_bar.position.z = sc[1].position.z;
+
     
    
 }
@@ -235,15 +264,16 @@ void initGL(GLFWwindow *window, int width, int height) {
     bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for(int i=0; i<10; i++)
     {
-        obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GREEN);
+        obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GOLD);
     }
     for(int i=10; i<20; i++)
     {
-        obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GREEN);
+        obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GOLD);
     }
     sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
     sc[2]       = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
+    fuel_bar    = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
     
     
     
