@@ -232,7 +232,7 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     //ball1       = Ball(0, 0, COLOR_RED);
     water       = Water(0, 0, COLOR_WATER);
-    plane       = Plane(0, 0, 0, COLOR_RED, COLOR_RED);
+    plane       = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
     bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for(int i=0; i<10; i++)
     {
