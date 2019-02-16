@@ -5,7 +5,7 @@
 #include "water.h"
 #include "score.h"
 #include "obstacle.h"
-
+#include "bomb.h"
 using namespace std;
 
 GLMatrices Matrices;
@@ -21,6 +21,7 @@ Plane plane;
 Water water;
 Obstacle obs[20];
 Score sc[3];
+Bomb bomb;
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -41,10 +42,10 @@ void draw() {
         
       float angle = (plane.pitch*3.14)/180;
       
-      glm::vec3 eye ( plane.position.x-2*sin(angle), plane.position.y-15, plane.position.z + 2*cos(angle)+1);
+      glm::vec3 eye ( plane.position.x, plane.position.y-15, plane.position.z+5);
       
       glm::vec3 target ( plane.position.x, plane.position.y , plane.position.z);
-      glm::vec3 up (0, 1, 0);
+      glm::vec3 up (0, 0, 1);
       Matrices.view = glm::lookAt( eye, target, up );
       
 
@@ -77,7 +78,7 @@ void draw() {
     else if(view==3) // top view
     {
         
-        glm::vec3 eye (plane.position.x, plane.position.y, plane.position.z-5);
+        glm::vec3 eye (plane.position.x, plane.position.y, plane.position.z+5);
         glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
         glm::vec3 up (0, 1, 0);
         Matrices.view = glm::lookAt( eye, target, up ); 
@@ -108,6 +109,8 @@ void draw() {
         sc[1].draw(VP);
         sc[2].draw(VP);
     }
+    if(bomb.appear) 
+        bomb.draw(VP);
    
 }
 
@@ -143,17 +146,17 @@ void tick_input(GLFWwindow *window) {
         plane.roll += 1;
     }
 
-    if (e) {
-        plane.roll -= 1;
-    }
-    if (!left and !right) {
-        if (plane.roll > 0) {
-            plane.roll--;
-        }
-        else if (plane.roll < 0) {
-            plane.roll++;
-        }
-    }
+    // if (e) {
+    //     plane.roll -= 1;
+    // }
+    // if (!left and !right) {
+    //     if (plane.roll > 0) {
+    //         plane.roll--;
+    //     }
+    //     else if (plane.roll < 0) {
+    //         plane.roll++;
+    //     }
+    // }
     if (w){
         plane.speed += 0.01;
         plane.position.z += plane.speed;
@@ -184,7 +187,14 @@ void tick_input(GLFWwindow *window) {
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
     }
-
+    
+    if(t)
+    {
+        bomb.appear = true;
+        bomb.position.x = plane.position.x;
+        bomb.position.y = plane.position.y -2;
+        bomb.position.z = obs[0].position.z;
+    }
 
 
         
@@ -202,8 +212,7 @@ void tick_elements() {
     if(plane.speed*10 <= 999)
         score = plane.speed*10;
     else
-        score = 999;
-    
+        score = 999;    
 
     scu = score%10;
     sct = (score/10)%10;
@@ -224,6 +233,7 @@ void initGL(GLFWwindow *window, int width, int height) {
     //ball1       = Ball(0, 0, COLOR_RED);
     water       = Water(0, 0, COLOR_WATER);
     plane       = Plane(0, 0, 0, COLOR_RED, COLOR_RED);
+    bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for(int i=0; i<10; i++)
     {
         obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GREEN);

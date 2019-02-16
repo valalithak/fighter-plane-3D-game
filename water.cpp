@@ -6,9 +6,9 @@ Water::Water(float x, float y, color_t color) {
     this->rotation = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 0.5 triangles each, so this makes 6*0.5=110 triangles, and 110*3 vertices
-    GLfloat w = 10000;
+    GLfloat w = 100000;
     GLfloat zn = -10.0f;
-    GLfloat zf = -10000.0f;
+    GLfloat zf = -100000.0f;
     static const GLfloat vertex_buffer_data[] = {
         // top
         -w, -w, zn,
