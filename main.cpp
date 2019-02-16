@@ -56,8 +56,8 @@ void draw() {
         float angle = (plane.rotation*3.14)/180;
 
        
-        glm::vec3 eye ( plane.position.x+2*sin(angle), plane.position.y+0.5 , plane.position.z+2*cos(angle));
-        glm::vec3 target ( plane.position.x, plane.position.y+1.2, plane.position.z+1);
+        glm::vec3 eye ( plane.position.x+2*sin(angle), plane.position.y, plane.position.z+2*cos(angle));
+        glm::vec3 target ( plane.position.x, plane.position.y+1.2, plane.position.z-0.6);
         glm::vec3 up (0, 1, 0);
         Matrices.view = glm::lookAt( eye, target, up );
         
@@ -99,7 +99,7 @@ void draw() {
 
     // Scene render
     //ball1.draw(VP);
-    plane.draw(VP);
+   
     water.draw(VP);
     for(int i=0; i<20; i++)
     obs[i].draw(VP);
@@ -111,7 +111,8 @@ void draw() {
     }
     if(bomb.appear) 
         bomb.draw(VP);
-   
+    if(view!=1)
+         plane.draw(VP);
 }
 
 void tick_input(GLFWwindow *window) {
@@ -146,18 +147,8 @@ void tick_input(GLFWwindow *window) {
         plane.roll += 1;
     }
 
-    // if (e) {
-    //     plane.roll -= 1;
-    // }
-    // if (!left and !right) {
-    //     if (plane.roll > 0) {
-    //         plane.roll--;
-    //     }
-    //     else if (plane.roll < 0) {
-    //         plane.roll++;
-    //     }
-    // }
-    if (w){
+    if (w)
+    {
         plane.speed += 0.01;
         plane.position.z += plane.speed;
         sc[0].position.z = plane.position.z;
@@ -194,6 +185,14 @@ void tick_input(GLFWwindow *window) {
         bomb.position.x = plane.position.x;
         bomb.position.y = plane.position.y -2;
         bomb.position.z = obs[0].position.z;
+    }
+    if(up)
+    {
+        plane.position.y += 0.2;
+        sc[0].position.y = plane.position.y - 5;
+        sc[1].position.y = plane.position.y - 5;
+        sc[2].position.y = plane.position.y - 5;
+
     }
 
 
@@ -245,8 +244,14 @@ void initGL(GLFWwindow *window, int width, int height) {
     sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
     sc[2]       = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
+    
+    
+    
+    
+    
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
+    
     // Get a handle for our "MVP" uniform
     Matrices.MatrixID = glGetUniformLocation(programID, "MVP");
 
