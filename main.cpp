@@ -24,8 +24,8 @@ Score sc[3];
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
-int view = 3;
-int score = 89;
+int view = 0;
+int score = plane.speed*100 +10;
 int scu, sct, sch;
 Timer t60(1.0 / 60);
 
@@ -155,7 +155,8 @@ void tick_input(GLFWwindow *window) {
         }
     }
     if (w){
-        plane.position.z += 0.05;
+        plane.speed += 0.01;
+        plane.position.z += plane.speed;
         sc[0].position.z = plane.position.z;
         sc[1].position.z = plane.position.z;
         sc[2].position.z = plane.position.z;
@@ -198,6 +199,12 @@ void tick_elements() {
     cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
     cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
     cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
+    if(plane.speed*10 <= 999)
+        score = plane.speed*10;
+    else
+        score = 999;
+    
+
     scu = score%10;
     sct = (score/10)%10;
     sch = (score/100)%10; 
