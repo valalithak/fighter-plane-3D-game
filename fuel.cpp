@@ -3,13 +3,13 @@
 
 Fuel::Fuel(float x, float y, float z, float ind, color_t color1, color_t color2) {
     this->position = glm::vec3(x, y, z);
-    this->f = ind;
+    this->f = ind; 
     
     this->rotation  = 0;
 
    GLfloat l = 4; // total length of bar
    GLfloat h = 0.5; // height of bar
-   
+
 
     // For 2-d Top view at z = 0
     GLfloat green_full[] = {
