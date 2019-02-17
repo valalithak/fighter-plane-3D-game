@@ -12,7 +12,7 @@
 using namespace std;
 
 GLMatrices Matrices;
-GLuint     programID;
+GLuint programID;
 GLFWwindow *window;
 
 /**************************
@@ -30,7 +30,6 @@ Bomb bomb;
 Fuel fuel_bar;
 Arrow arrow[NUM_OBSTACLES];
 
-
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
@@ -43,64 +42,53 @@ int jump = 0;
 
 Timer t60(1.0 / 60);
 
-void draw() {
+void draw()
+{
     // clear the color and depth in the frame buffer
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram (programID);
-    
+    glUseProgram(programID);
 
-    if(view==0) //follow cam
+    if (view == 0) //follow cam
     {
-        
-      float angle = (plane.pitch*3.14)/180;
-      
-      glm::vec3 eye ( plane.position.x, plane.position.y-15, plane.position.z+5);
-      
-      glm::vec3 target ( plane.position.x, plane.position.y , plane.position.z);
-      glm::vec3 up (0, 0, 1);
-      Matrices.view = glm::lookAt( eye, target, up );
-      
 
+        float angle = (plane.pitch * 3.14) / 180;
+
+        glm::vec3 eye(plane.position.x, plane.position.y - 15, plane.position.z + 5);
+
+        glm::vec3 target(plane.position.x, plane.position.y, plane.position.z);
+        glm::vec3 up(0, 0, 1);
+        Matrices.view = glm::lookAt(eye, target, up);
     }
 
-    else if(view==1) // first person plane view
+    else if (view == 1) // first person plane view
     {
-        float angle = (plane.rotation*3.14)/180;
+        float angle = (plane.rotation * 3.14) / 180;
 
-       
-        glm::vec3 eye ( plane.position.x+2*sin(angle), plane.position.y, plane.position.z+2*cos(angle));
-        glm::vec3 target ( plane.position.x, plane.position.y+1.2, plane.position.z-0.6);
-        glm::vec3 up (0, 1, 0);
-        Matrices.view = glm::lookAt( eye, target, up );
-        
-        
+        glm::vec3 eye(plane.position.x + 2 * sin(angle), plane.position.y, plane.position.z + 2 * cos(angle));
+        glm::vec3 target(plane.position.x, plane.position.y + 1.2, plane.position.z - 0.6);
+        glm::vec3 up(0, 1, 0);
+        Matrices.view = glm::lookAt(eye, target, up);
     }
 
-    else if(view==2) // tower-view
+    else if (view == 2) // tower-view
     {
-     
-        glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 eye (3, 3, 3);
-        glm::vec3 up (0, 0, 1);
-        Matrices.view = glm::lookAt( eye, target, up );
 
+        glm::vec3 target(plane.position.x, plane.position.y, plane.position.z);
+        glm::vec3 eye(3, 3, 3);
+        glm::vec3 up(0, 0, 1);
+        Matrices.view = glm::lookAt(eye, target, up);
     }
 
-
-    else if(view==3) // top view
+    else if (view == 3) // top view
     {
-        
-        glm::vec3 eye (plane.position.x, plane.position.y, plane.position.z+5);
-        glm::vec3 target (plane.position.x, plane.position.y, plane.position.z);
-        glm::vec3 up (0, 1, 0);
-        Matrices.view = glm::lookAt( eye, target, up ); 
-        
+
+        glm::vec3 eye(plane.position.x, plane.position.y, plane.position.z + 5);
+        glm::vec3 target(plane.position.x, plane.position.y, plane.position.z);
+        glm::vec3 up(0, 1, 0);
+        Matrices.view = glm::lookAt(eye, target, up);
     }
 
-   
-
-    
     // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
     // Don't change unless you are sure!!
     glm::mat4 VP = Matrices.projection * Matrices.view;
@@ -108,15 +96,15 @@ void draw() {
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // For each model you render, since the MVP will be different (at least the M part)
     // Don't change unless you are sure!!
-    glm::mat4 MVP;  // MVP = Projection * View * Model
+    glm::mat4 MVP; // MVP = Projection * View * Model
 
     // Scene render
     //ball1.draw(VP);
-   
+
     water.draw(VP);
-    for(int i=0; i<NUM_OBSTACLES; i++)
-    obs[i].draw(VP);
-    if(view==0)
+    for (int i = 0; i < NUM_OBSTACLES; i++)
+        obs[i].draw(VP);
+    if (view == 0 || view == 1)
     {
         sc[0].draw(VP);
         sc[1].draw(VP);
@@ -127,16 +115,15 @@ void draw() {
         fuel_bar.draw(VP);
         arrow[0].draw(VP);
     }
-    if(bomb.appear) 
+    if (bomb.appear)
         bomb.draw(VP);
-    if(view!=1)
-         plane.draw(VP);
-
-    
+    if (view != 1)
+        plane.draw(VP);
 }
 
-void tick_input(GLFWwindow *window) {
-    int left  = glfwGetKey(window, GLFW_KEY_LEFT);
+void tick_input(GLFWwindow *window)
+{
+    int left = glfwGetKey(window, GLFW_KEY_LEFT);
     int right = glfwGetKey(window, GLFW_KEY_RIGHT);
     int up = glfwGetKey(window, GLFW_KEY_UP);
     int down = glfwGetKey(window, GLFW_KEY_DOWN);
@@ -151,26 +138,27 @@ void tick_input(GLFWwindow *window) {
     int one = glfwGetKey(window, GLFW_KEY_1);
     int two = glfwGetKey(window, GLFW_KEY_2);
     int three = glfwGetKey(window, GLFW_KEY_3);
-    if(three)
+    if (three)
         view = 3;
-    if(one)
+    if (one)
         view = 1;
-    if(two)
+    if (two)
         view = 2;
-    if(zero)
+    if (zero)
         view = 0;
-    if(left)
+    if (left)
         plane.pitch -= 1;
-    if(right)
-         plane.pitch += 1;
-    if (q) {
+    if (right)
+        plane.pitch += 1;
+    if (q)
+    {
         plane.roll += 1;
     }
-    if(altitude>100)
+    if (altitude > 110)
     {
         plane.gravity = true;
     }
-    if(altitude<=100)
+    if (altitude <= 110)
     {
         plane.gravity = false;
     }
@@ -180,29 +168,57 @@ void tick_input(GLFWwindow *window) {
         jump = 1;
         altitude += 3;
         // plane.speed += 0.01;
-        plane.position.z += plane.speed/20;
-        sc[0].position.z = plane.position.z;
-        sc[1].position.z = plane.position.z;
-        sc[2].position.z = plane.position.z;
-        alt[0].position.z = plane.position.z;
-        alt[1].position.z = plane.position.z;
-        alt[2].position.z = plane.position.z;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
-        fuel_bar.position.z = sc[1].position.z;
+        plane.position.z += plane.speed / 20;
+        if (view == 0)
+        {
+            sc[0].position.z = plane.position.z;
+            sc[1].position.z = plane.position.z;
+            sc[2].position.z = plane.position.z;
+            alt[0].position.z = plane.position.z;
+            alt[1].position.z = plane.position.z;
+            alt[2].position.z = plane.position.z;
+            fuel_bar.position.x = sc[1].position.x;
+            fuel_bar.position.y = sc[1].position.y - 2;
+            fuel_bar.position.z = sc[1].position.z;
+        }
+        if (view == 1)
+        {
+            sc[0].position.z = 0;
+            sc[0].position.y = 4;
+            sc[0].position.x = -2;
 
+            sc[1].position.z = 0;
+            sc[1].position.y = 4;
+            sc[1].position.x = -3;
+
+            sc[2].position.z = 0;
+            sc[2].position.y = 4;
+            sc[2].position.x = -4;
+
+            alt[2].position.y = alt[1].position.y;
+
+            // sc[1].position.z = 3;
+            // sc[2].position.z = 3;
+            // alt[0].position.z = plane.position.z;
+            // alt[1].position.z = plane.position.z;
+            // alt[2].position.z = plane.position.z;
+            // fuel_bar.position.x = sc[1].position.x;
+            // fuel_bar.position.y = sc[1].position.y -2;
+            // fuel_bar.position.z = sc[1].position.z;
+        }
     }
-    if(!space)
+    if (!space)
         jump = 0;
-       
-    if (a) {
+
+    if (a)
+    {
         // plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
         // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
         // plane.position.x -= 0.1 * cos(plane.yaw * M_PI / 180);
         // plane.position.z -= 0.1 * sin(plane.yaw * M_PI / 180);
 
         plane.yaw += 1;
-        
+
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
         sc[1].position.x = sc[0].position.x - 1;
@@ -210,103 +226,98 @@ void tick_input(GLFWwindow *window) {
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
 
-        
-        
         alt[0].position.x = plane.position.x + 5;
         alt[0].position.z = plane.position.z;
 
         alt[1].position.x = alt[0].position.x - 1;
         alt[1].position.z = alt[0].position.z;
-        
+
         alt[2].position.x = alt[1].position.x - 1;
         alt[2].position.z = alt[1].position.z;
-        
+
         fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.y = sc[1].position.y - 2;
         fuel_bar.position.z = sc[1].position.z;
-
-
     }
-    if (d) {
+    if (d)
+    {
 
-         plane.yaw -= 1;
+        plane.yaw -= 1;
         // plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
         // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
-        
+
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
-       
+
         sc[1].position.x = sc[0].position.x - 1;
         sc[1].position.z = sc[0].position.z;
-        
+
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
 
-       
         alt[0].position.x = plane.position.x + 5;
         alt[0].position.z = plane.position.z;
 
         alt[1].position.x = alt[0].position.x - 1;
         alt[1].position.z = alt[0].position.z;
-        
+
         alt[2].position.x = alt[1].position.x - 1;
         alt[2].position.z = alt[1].position.z;
-        
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
-        fuel_bar.position.z = sc[1].position.z;
 
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y - 2;
+        fuel_bar.position.z = sc[1].position.z;
     }
-    
-    if(t)
+
+    if (t)
     {
         bomb.appear = true;
         bomb.position.x = plane.position.x;
-        bomb.position.y = plane.position.y -2;
+        bomb.position.y = plane.position.y - 2;
         bomb.position.z = obs[0].position.z;
     }
-    if(w) // moves forward
+    if (w) // moves forward
     {
         plane.speed += 0.01;
-        float a = (plane.yaw*3.14)/180;
-        plane.position.y += 0.1*cos(a);
-        plane.position.x -= 0.1*sin(a);
-        
-        sc[0].position.x -= 0.1*sin(a);
-        sc[1].position.x -= 0.1*sin(a);
-        sc[2].position.x -= 0.1*sin(a);
-        if(cos(a)>0){
-        sc[0].position.y = plane.position.y - 5*cos(a) -5;
-        sc[1].position.y = plane.position.y -5*cos(a) - 5;
-        sc[2].position.y = plane.position.y - 5*cos(a) - 5;
-        alt[0].position.y = plane.position.y - 5*cos(a) - 5;
-        alt[1].position.y = plane.position.y - 5*cos(a) - 5;
-        alt[2].position.y = plane.position.y - 5*cos(a) -5;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
-        fuel_bar.position.z = sc[1].position.z;
+        float a = (plane.yaw * 3.14) / 180;
+        plane.position.y += 0.1 * cos(a);
+        plane.position.x -= 0.1 * sin(a);
+        if (view == 0)
+        {
+            sc[0].position.x -= 0.1 * sin(a);
+            sc[1].position.x -= 0.1 * sin(a);
+            sc[2].position.x -= 0.1 * sin(a);
+            if (cos(a) > 0)
+            {
+                sc[0].position.y = plane.position.y - 5 * cos(a) - 5;
+                sc[1].position.y = plane.position.y - 5 * cos(a) - 5;
+                sc[2].position.y = plane.position.y - 5 * cos(a) - 5;
+                alt[0].position.y = plane.position.y - 5 * cos(a) - 5;
+                alt[1].position.y = plane.position.y - 5 * cos(a) - 5;
+                alt[2].position.y = plane.position.y - 5 * cos(a) - 5;
+                fuel_bar.position.x = sc[1].position.x;
+                fuel_bar.position.y = sc[1].position.y - 2;
+                fuel_bar.position.z = sc[1].position.z;
+            }
+            else
+            {
+                sc[0].position.y = plane.position.y - 5 * cos(a) + 5;
+                sc[1].position.y = plane.position.y - 5 * cos(a) + 5;
+                sc[2].position.y = plane.position.y - 5 * cos(a) + 5;
+                alt[0].position.y = plane.position.y - 5 * cos(a) + 5;
+                alt[1].position.y = plane.position.y - 5 * cos(a) + 5;
+                alt[2].position.y = plane.position.y - 5 * cos(a) + 5;
+                fuel_bar.position.x = sc[1].position.x;
+                fuel_bar.position.y = sc[1].position.y - 2;
+                fuel_bar.position.z = sc[1].position.z;
+            }
         }
-        else{
-        sc[0].position.y = plane.position.y - 5*cos(a) +5;
-        sc[1].position.y = plane.position.y -5*cos(a) + 5;
-        sc[2].position.y = plane.position.y - 5*cos(a) + 5;
-        alt[0].position.y = plane.position.y - 5*cos(a) + 5;
-        alt[1].position.y = plane.position.y - 5*cos(a) + 5;
-        alt[2].position.y = plane.position.y - 5*cos(a) +5;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
-        fuel_bar.position.z = sc[1].position.z;
-        }
-
-
     }
-
-
-        
 }
 
-void tick_elements() {
-    
+void tick_elements()
+{
+
     // if(fuel<=0.0) {
     //     quit(window);
     // }
@@ -314,24 +325,24 @@ void tick_elements() {
     // cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
     // cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
     // cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
-    if(plane.speed*10 <= 999)
-        score = plane.speed*10;
+    if (plane.speed * 10 <= 999)
+        score = plane.speed * 10;
     else
-        score = 999;    
+        score = 999;
 
-    scu = score%10;
-    sct = (score/10)%10;
-    sch = (score/100)%10; 
+    scu = score % 10;
+    sct = (score / 10) % 10;
+    sch = (score / 100) % 10;
     sc[0].val = scu;
     sc[1].val = sct;
     sc[2].val = sch;
 
-    if(altitude >= 999)
-        altitude = 999;    
+    if (altitude >= 999)
+        altitude = 999;
 
-    altu = altitude%10;
-    altt = (altitude/10)%10;
-    alth = (altitude/100)%10; 
+    altu = altitude % 10;
+    altt = (altitude / 10) % 10;
+    alth = (altitude / 100) % 10;
     alt[0].val = altu;
     alt[1].val = altt;
     alt[2].val = alth;
@@ -340,24 +351,24 @@ void tick_elements() {
     fuel_bar.f = fuel;
 
     fuel_bar.position.x = sc[1].position.x;
-    fuel_bar.position.y = sc[1].position.y -2;
+    fuel_bar.position.y = sc[1].position.y - 2;
     fuel_bar.position.z = sc[1].position.z;
 
     alt[0].position.x = sc[0].position.x + 5;
-    alt[1].position.x = sc[1].position.x  + 5;
+    alt[1].position.x = sc[1].position.x + 5;
     alt[2].position.x = sc[2].position.x + 5;
     alt[0].position.y = sc[0].position.y;
     alt[0].position.z = sc[0].position.z;
     alt[1].position.y = sc[0].position.y;
     alt[2].position.z = sc[0].position.z;
 
-     if(plane.gravity && jump == 0)
+    if (plane.gravity && jump == 0 && view == 0)
     {
-        altitude -=3;
-        plane.position.z -= plane.speed/20;
-        altu = altitude%10;
-        altt = (altitude/10)%10;
-        alth = (altitude/100)%10; 
+        altitude -= 3;
+        plane.position.z -= plane.speed / 20;
+        altu = altitude % 10;
+        altt = (altitude / 10) % 10;
+        alth = (altitude / 100) % 10;
         alt[0].val = altu;
         alt[1].val = altt;
         alt[2].val = alth;
@@ -368,64 +379,69 @@ void tick_elements() {
         alt[1].position.z = plane.position.z;
         alt[2].position.z = plane.position.z;
         fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.y = sc[1].position.y - 2;
         fuel_bar.position.z = sc[1].position.z;
     }
-    
-    
-   
+    if (view == 1)
+    {
+        sc[0].position.x = plane.position.x;
+        sc[0].position.y = plane.position.y + 1.5;
+        sc[0].position.z = plane.position.z - 0.5;
+
+        sc[1].position.x = sc[0].position.x - 1;
+        sc[1].position.y = sc[0].position.y;
+        sc[1].position.z = sc[0].position.z;
+
+        sc[2].position.x = sc[1].position.x - 1;
+        sc[2].position.y = sc[1].position.y;
+        sc[2].position.z = sc[1].position.z;
+    }
 }
 
 /* Initialize the OpenGL rendering properties */
 /* Add all the models to be created here */
-void initGL(GLFWwindow *window, int width, int height) {
+void initGL(GLFWwindow *window, int width, int height)
+{
     /* Objects should be created before any other gl function and shaders */
     // Create the models
 
     //ball1       = Ball(0, 0, COLOR_RED);
-    water       = Water(0, 0, COLOR_WATER);
-    plane       = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
-    bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
-    for(int i=0; i<NUM_OBSTACLES/2; i++)
+    water = Water(0, 0, COLOR_WATER);
+    plane = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
+    bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
+    for (int i = 0; i < NUM_OBSTACLES / 2; i++)
     {
-        obs[i]         = Obstacle(2*i + rand()%6, -5, -1*(i+rand()%2), COLOR_GOLD);
-        arrow[i]       = Arrow(2*i + rand()%6, -5, -1*(i+rand()%2)+0.5, i, COLOR_RED);
+        obs[i] = Obstacle(2 * i + rand() % 6, -5, -1 * (i + rand() % 2), COLOR_GOLD);
+        arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i, COLOR_RED);
     }
-    for(int i=NUM_OBSTACLES/2; i<NUM_OBSTACLES; i++)
+    for (int i = NUM_OBSTACLES / 2; i < NUM_OBSTACLES; i++)
     {
-        obs[i]         = Obstacle(-2*(i-10) + rand()%6, -5, -1*((i-10)+rand()%2), COLOR_GOLD);
+        obs[i] = Obstacle(-2 * (i - 10) + rand() % 6, -5, -1 * ((i - 10) + rand() % 2), COLOR_GOLD);
     }
-    sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
-    sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
-    sc[2]       = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
-    
-    alt[0]      = Score(screen_center_x+5, -8, -2, altu, COLOR_BLACK);
-    alt[1]      = Score(screen_center_x - 1+5, -8, -2, altt, COLOR_BLACK);
-    alt[2]      = Score(screen_center_x - 2+5, -8, -2, alth, COLOR_BLACK);
-    
-    fuel_bar    = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
+    sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
+    sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
+    sc[2] = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
 
-    
-    
-    
-    
-    
-    
+    alt[0] = Score(screen_center_x + 5, -8, -2, altu, COLOR_BLACK);
+    alt[1] = Score(screen_center_x - 1 + 5, -8, -2, altt, COLOR_BLACK);
+    alt[2] = Score(screen_center_x - 2 + 5, -8, -2, alth, COLOR_BLACK);
+
+    fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
+
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
-    
+
     // Get a handle for our "MVP" uniform
     Matrices.MatrixID = glGetUniformLocation(programID, "MVP");
 
-
-    reshapeWindow (window, width, height);
+    reshapeWindow(window, width, height);
 
     // Background color of the scene
-    glClearColor (COLOR_BACKGROUND.r / 256.0, COLOR_BACKGROUND.g / 256.0, COLOR_BACKGROUND.b / 256.0, 0.0f); // R, G, B, A
-    glClearDepth (1.0f);
+    glClearColor(COLOR_BACKGROUND.r / 256.0, COLOR_BACKGROUND.g / 256.0, COLOR_BACKGROUND.b / 256.0, 0.0f); // R, G, B, A
+    glClearDepth(1.0f);
 
-    glEnable (GL_DEPTH_TEST);
-    glDepthFunc (GL_LEQUAL);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
     cout << "VENDOR: " << glGetString(GL_VENDOR) << endl;
     cout << "RENDERER: " << glGetString(GL_RENDERER) << endl;
@@ -433,22 +449,23 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
-
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     srand(time(0));
-    int width  = 600;
+    int width = 600;
     int height = 600;
-    
 
     window = initGLFW(width, height);
 
-    initGL (window, width, height);
+    initGL(window, width, height);
 
     /* Draw in loop */
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(window))
+    {
         // Process timers
 
-        if (t60.processTick()) {
+        if (t60.processTick())
+        {
             // 60 fps
             // OpenGL Draw commands
             draw();
@@ -466,18 +483,19 @@ int main(int argc, char **argv) {
     quit(window);
 }
 
-bool detect_collision(bounding_box_t a, bounding_box_t b) {
+bool detect_collision(bounding_box_t a, bounding_box_t b)
+{
     return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
            (abs(a.y - b.y) * 2 < (a.height + b.height));
 }
 
-void reset_screen() {
-    float top    = screen_center_y + 4 / screen_zoom;
+void reset_screen()
+{
+    float top = screen_center_y + 4 / screen_zoom;
     float bottom = screen_center_y - 4 / screen_zoom;
-    float left   = screen_center_x - 4 / screen_zoom;
-    float right  = screen_center_x + 4 / screen_zoom;
+    float left = screen_center_x - 4 / screen_zoom;
+    float right = screen_center_x + 4 / screen_zoom;
     // Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
     // Matrices.projection = glm::perspective(left, right, bottom, top);
-    Matrices.projection = glm::infinitePerspective(glm::radians(90.0f),2.0f,0.1f);
+    Matrices.projection = glm::infinitePerspective(glm::radians(90.0f), 2.0f, 0.1f);
 }
-
