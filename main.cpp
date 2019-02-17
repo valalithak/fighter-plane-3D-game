@@ -211,8 +211,12 @@ void tick_input(GLFWwindow *window) {
     }
        
     if (a) {
-        plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
-        plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        // plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
+        // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        // plane.position.x -= 0.1 * cos(plane.yaw * M_PI / 180);
+        // plane.position.z -= 0.1 * sin(plane.yaw * M_PI / 180);
+
+        plane.yaw += 1;
         
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
@@ -239,8 +243,10 @@ void tick_input(GLFWwindow *window) {
 
     }
     if (d) {
-        plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
-        plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+
+         plane.yaw -= 1;
+        // plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
+        // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
         
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
