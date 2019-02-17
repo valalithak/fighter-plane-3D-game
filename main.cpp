@@ -181,92 +181,66 @@ void tick_input(GLFWwindow *window)
             fuel_bar.position.y = sc[1].position.y - 2;
             fuel_bar.position.z = sc[1].position.z;
         }
-        if (view == 1)
-        {
-            sc[0].position.z = 0;
-            sc[0].position.y = 4;
-            sc[0].position.x = -2;
-
-            sc[1].position.z = 0;
-            sc[1].position.y = 4;
-            sc[1].position.x = -3;
-
-            sc[2].position.z = 0;
-            sc[2].position.y = 4;
-            sc[2].position.x = -4;
-
-            alt[2].position.y = alt[1].position.y;
-
-            // sc[1].position.z = 3;
-            // sc[2].position.z = 3;
-            // alt[0].position.z = plane.position.z;
-            // alt[1].position.z = plane.position.z;
-            // alt[2].position.z = plane.position.z;
-            // fuel_bar.position.x = sc[1].position.x;
-            // fuel_bar.position.y = sc[1].position.y -2;
-            // fuel_bar.position.z = sc[1].position.z;
-        }
     }
     if (!space)
         jump = 0;
 
     if (a)
     {
-        // plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
-        // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
-        // plane.position.x -= 0.1 * cos(plane.yaw * M_PI / 180);
-        // plane.position.z -= 0.1 * sin(plane.yaw * M_PI / 180);
-
         plane.yaw += 1;
+        if (view == 0)
+        {
 
-        sc[0].position.x = plane.position.x;
-        sc[0].position.z = plane.position.z;
-        sc[1].position.x = sc[0].position.x - 1;
-        sc[1].position.z = sc[0].position.z;
-        sc[2].position.x = sc[1].position.x - 1;
-        sc[2].position.z = sc[1].position.z;
+            sc[0].position.x = plane.position.x;
+            sc[0].position.z = plane.position.z;
+            sc[1].position.x = sc[0].position.x - 1;
+            sc[1].position.z = sc[0].position.z;
+            sc[2].position.x = sc[1].position.x - 1;
+            sc[2].position.z = sc[1].position.z;
 
-        alt[0].position.x = plane.position.x + 5;
-        alt[0].position.z = plane.position.z;
+            alt[0].position.x = plane.position.x + 5;
+            alt[0].position.z = plane.position.z;
 
-        alt[1].position.x = alt[0].position.x - 1;
-        alt[1].position.z = alt[0].position.z;
+            alt[1].position.x = alt[0].position.x - 1;
+            alt[1].position.z = alt[0].position.z;
 
-        alt[2].position.x = alt[1].position.x - 1;
-        alt[2].position.z = alt[1].position.z;
+            alt[2].position.x = alt[1].position.x - 1;
+            alt[2].position.z = alt[1].position.z;
 
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
+            fuel_bar.position.x = sc[1].position.x;
+            fuel_bar.position.y = sc[1].position.y - 2;
+            fuel_bar.position.z = sc[1].position.z;
+        }
     }
     if (d)
     {
 
         plane.yaw -= 1;
-        // plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
-        // plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        if (view == 0)
+        {
 
-        sc[0].position.x = plane.position.x;
-        sc[0].position.z = plane.position.z;
+            sc[0].position.x = plane.position.x;
+            sc[0].position.z = plane.position.z;
 
-        sc[1].position.x = sc[0].position.x - 1;
-        sc[1].position.z = sc[0].position.z;
+            sc[1].position.x = sc[0].position.x - 1;
+            sc[1].position.z = sc[0].position.z;
 
-        sc[2].position.x = sc[1].position.x - 1;
-        sc[2].position.z = sc[1].position.z;
+            sc[2].position.x = sc[1].position.x - 1;
+            sc[2].position.z = sc[1].position.z;
 
-        alt[0].position.x = plane.position.x + 5;
-        alt[0].position.z = plane.position.z;
+            alt[0].position.x = plane.position.x + 5;
+            alt[0].position.z = plane.position.z;
 
-        alt[1].position.x = alt[0].position.x - 1;
-        alt[1].position.z = alt[0].position.z;
+            alt[1].position.x = alt[0].position.x - 1;
+            alt[1].position.z = alt[0].position.z;
 
-        alt[2].position.x = alt[1].position.x - 1;
-        alt[2].position.z = alt[1].position.z;
+            alt[2].position.x = alt[1].position.x - 1;
+            alt[2].position.z = alt[1].position.z;
 
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
+            fuel_bar.position.x = sc[1].position.x;
+            fuel_bar.position.y = sc[1].position.y - 2;
+            fuel_bar.position.z = sc[1].position.z;
+        }
     }
 
     if (t)
@@ -322,9 +296,7 @@ void tick_elements()
     //     quit(window);
     // }
     plane.tick();
-    // cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
-    // cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
-    // cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
+
     if (plane.speed * 10 <= 999)
         score = plane.speed * 10;
     else
