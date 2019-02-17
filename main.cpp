@@ -104,7 +104,7 @@ void draw()
     water.draw(VP);
     for (int i = 0; i < NUM_OBSTACLES; i++)
         obs[i].draw(VP);
-    if (view == 0 || view == 1)
+    if (view == 0 || view == 1 || view == 3)
     {
         sc[0].draw(VP);
         sc[1].draw(VP);
@@ -146,9 +146,9 @@ void tick_input(GLFWwindow *window)
         view = 2;
     if (zero)
         view = 0;
-    if (left)
+    if (a)
         plane.pitch -= 1;
-    if (right)
+    if (d)
         plane.pitch += 1;
     if (q)
     {
@@ -185,7 +185,7 @@ void tick_input(GLFWwindow *window)
     if (!space)
         jump = 0;
 
-    if (a)
+    if (q)
     {
         plane.yaw += 1;
         if (view == 0)
@@ -212,7 +212,7 @@ void tick_input(GLFWwindow *window)
             fuel_bar.position.z = sc[1].position.z;
         }
     }
-    if (d)
+    if (e)
     {
 
         plane.yaw -= 1;
@@ -286,6 +286,7 @@ void tick_input(GLFWwindow *window)
                 fuel_bar.position.z = sc[1].position.z;
             }
         }
+       
     }
 }
 
@@ -296,6 +297,7 @@ void tick_elements()
     //     quit(window);
     // }
     plane.tick();
+    bomb.tick();
 
     if (plane.speed * 10 <= 999)
         score = plane.speed * 10;
@@ -368,6 +370,21 @@ void tick_elements()
         fuel_bar.position.y = sc[1].position.y - 2;
         fuel_bar.position.z = sc[1].position.z;
     }
+    if (plane.gravity && jump == 0 && view == 3)
+    {
+        altitude -= 3;
+        plane.position.z -= plane.speed / 20;
+        altu = altitude % 10;
+        altt = (altitude / 10) % 10;
+        alth = (altitude / 100) % 10;
+        alt[0].val = altu;
+        alt[1].val = altt;
+        alt[2].val = alth;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y - 2;
+        fuel_bar.position.z = sc[1].position.z;
+    }
+
     if (view == 1)
     {
         sc[0].position.x = plane.position.x - 2;
@@ -393,6 +410,33 @@ void tick_elements()
         alt[2].position.y = sc[2].position.y;
         alt[2].position.z = sc[2].position.z;
     }
+
+    if (view == 3)
+    {
+        sc[0].position.x = plane.position.x - 3;
+        sc[0].position.y = plane.position.y - 3;
+        sc[0].position.z = plane.position.z - 0.5;
+
+        sc[1].position.x = sc[0].position.x - 1;
+        sc[1].position.y = sc[0].position.y;
+        sc[1].position.z = sc[0].position.z;
+
+        sc[2].position.x = sc[1].position.x - 1;
+        sc[2].position.y = sc[1].position.y;
+        sc[2].position.z = sc[1].position.z;
+
+        alt[0].position.x = sc[0].position.x + 7;
+        alt[1].position.x = sc[1].position.x + 7;
+        alt[2].position.x = sc[2].position.x + 7;
+        alt[0].position.y = sc[0].position.y;
+        alt[0].position.z = sc[0].position.z;
+
+        alt[1].position.y = sc[0].position.y;
+        alt[1].position.z = sc[1].position.z;
+        alt[2].position.y = sc[2].position.y;
+        alt[2].position.z = sc[2].position.z;
+    }
+
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -408,12 +452,12 @@ void initGL(GLFWwindow *window, int width, int height)
     bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for (int i = 0; i < NUM_OBSTACLES / 2; i++)
     {
-        obs[i] = Obstacle(3*i + rand() % 100, 2*i, -(i + rand() % 10), COLOR_GOLD);
+        obs[i] = Obstacle(3 * i + rand() % 100, 2 * i, -(i + rand() % 10), COLOR_GOLD);
         arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i, COLOR_RED);
     }
     for (int i = NUM_OBSTACLES / 2; i < NUM_OBSTACLES; i++)
     {
-        obs[i] = Obstacle(-1*(i - NUM_OBSTACLES/2) + rand() % 100, 2*i, -1 * ((i - NUM_OBSTACLES/2) + rand() % 2), COLOR_GOLD);
+        obs[i] = Obstacle(-1 * (i - NUM_OBSTACLES / 2) + rand() % 100, 2 * i, -1 * ((i - NUM_OBSTACLES / 2) + rand() % 2), COLOR_GOLD);
     }
     sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
