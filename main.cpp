@@ -7,6 +7,7 @@
 #include "obstacle.h"
 #include "bomb.h"
 #include "fuel.h"
+#include "arrow.h"
 
 using namespace std;
 
@@ -17,15 +18,17 @@ GLFWwindow *window;
 /**************************
 * Customizable functions *
 **************************/
+#define NUM_OBSTACLES 20
 
 //Ball ball1;
 Plane plane;
 Water water;
-Obstacle obs[20];
+Obstacle obs[NUM_OBSTACLES];
 Score sc[3];
 Score alt[3];
 Bomb bomb;
 Fuel fuel_bar;
+Arrow arrow[NUM_OBSTACLES];
 
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
@@ -110,7 +113,7 @@ void draw() {
     //ball1.draw(VP);
    
     water.draw(VP);
-    for(int i=0; i<20; i++)
+    for(int i=0; i<NUM_OBSTACLES; i++)
     obs[i].draw(VP);
     if(view==0)
     {
@@ -121,6 +124,7 @@ void draw() {
         alt[1].draw(VP);
         alt[2].draw(VP);
         fuel_bar.draw(VP);
+        arrow[0].draw(VP);
     }
     if(bomb.appear) 
         bomb.draw(VP);
@@ -297,9 +301,9 @@ void tick_elements() {
     //     quit(window);
     // }
     plane.tick();
-    cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
-    cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
-    cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
+    // cout << "x water plane obs0 " << water.position.x << " "  << plane.position.x << " " << obs[0].position.x << endl;
+    // cout << "y water plane obs0 " << water.position.y << " "  << plane.position.y << " " << obs[0].position.y << endl;
+    // cout << "z water plane obs0 " << water.position.z << " "  << plane.position.z << " " << obs[0].position.z << endl;
     if(plane.speed*10 <= 999)
         score = plane.speed*10;
     else
@@ -352,11 +356,12 @@ void initGL(GLFWwindow *window, int width, int height) {
     water       = Water(0, 0, COLOR_WATER);
     plane       = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
     bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
-    for(int i=0; i<10; i++)
+    for(int i=0; i<NUM_OBSTACLES/2; i++)
     {
         obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GOLD);
+        arrow[i]       = Arrow(2*i + rand()%6, 0, -1*(i+rand()%2)+0.5, i, COLOR_RED);
     }
-    for(int i=10; i<20; i++)
+    for(int i=NUM_OBSTACLES/2; i<NUM_OBSTACLES; i++)
     {
         obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GOLD);
     }
@@ -369,6 +374,8 @@ void initGL(GLFWwindow *window, int width, int height) {
     alt[2]      = Score(screen_center_x - 2+5, -8, -2, alth, COLOR_BLACK);
     
     fuel_bar    = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
+
+    
     
     
     
