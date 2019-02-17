@@ -23,6 +23,7 @@ Plane plane;
 Water water;
 Obstacle obs[20];
 Score sc[3];
+Score alt[3];
 Bomb bomb;
 Fuel fuel_bar;
 
@@ -30,9 +31,12 @@ Fuel fuel_bar;
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
-int score = plane.speed*100 +10;
+int score = plane.speed;
 int scu, sct, sch;
+int altu, altt, alth;
 int fuel = 2000;
+int altitude = 100;
+
 Timer t60(1.0 / 60);
 
 void draw() {
@@ -113,12 +117,35 @@ void draw() {
         sc[0].draw(VP);
         sc[1].draw(VP);
         sc[2].draw(VP);
+        alt[0].draw(VP);
+        alt[1].draw(VP);
+        alt[2].draw(VP);
         fuel_bar.draw(VP);
     }
     if(bomb.appear) 
         bomb.draw(VP);
     if(view!=1)
          plane.draw(VP);
+
+    if(plane.gravity)
+    {
+        altitude -=1;
+        altu = altitude%10;
+        altt = (altitude/10)%10;
+        alth = (altitude/100)%10; 
+        alt[0].val = altu;
+        alt[1].val = altt;
+        alt[2].val = alth;
+        sc[0].position.z = plane.position.z;
+        sc[1].position.z = plane.position.z;
+        sc[2].position.z = plane.position.z;
+        alt[0].position.z = plane.position.z;
+        alt[1].position.z = plane.position.z;
+        alt[2].position.z = plane.position.z;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+    }
     
 }
 
@@ -153,14 +180,26 @@ void tick_input(GLFWwindow *window) {
     if (q) {
         plane.roll += 1;
     }
-
-    if (w)
+    if(altitude>100)
     {
-        plane.speed += 0.01;
-        plane.position.z += plane.speed;
+        plane.gravity = true;
+    }
+    if(altitude<=100)
+    {
+        plane.gravity = false;
+    }
+
+    if (space)
+    {
+        altitude += 3;
+        // plane.speed += 0.01;
+        plane.position.z += plane.speed/20;
         sc[0].position.z = plane.position.z;
         sc[1].position.z = plane.position.z;
         sc[2].position.z = plane.position.z;
+        alt[0].position.z = plane.position.z;
+        alt[1].position.z = plane.position.z;
+        alt[2].position.z = plane.position.z;
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
@@ -170,12 +209,25 @@ void tick_input(GLFWwindow *window) {
     if (a) {
         plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
         plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
         sc[1].position.x = sc[0].position.x - 1;
         sc[1].position.z = sc[0].position.z;
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
+
+        
+        
+        alt[0].position.x = plane.position.x + 5;
+        alt[0].position.z = plane.position.z;
+
+        alt[1].position.x = alt[0].position.x - 1;
+        alt[1].position.z = alt[0].position.z;
+        
+        alt[2].position.x = alt[1].position.x - 1;
+        alt[2].position.z = alt[1].position.z;
+        
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
@@ -185,12 +237,26 @@ void tick_input(GLFWwindow *window) {
     if (d) {
         plane.position.x += 0.1 * cos(plane.pitch * M_PI / 180);
         plane.position.z -= 0.1 * sin(plane.pitch * M_PI / 180);
+        
         sc[0].position.x = plane.position.x;
         sc[0].position.z = plane.position.z;
+       
         sc[1].position.x = sc[0].position.x - 1;
         sc[1].position.z = sc[0].position.z;
+        
         sc[2].position.x = sc[1].position.x - 1;
         sc[2].position.z = sc[1].position.z;
+
+       
+        alt[0].position.x = plane.position.x + 5;
+        alt[0].position.z = plane.position.z;
+
+        alt[1].position.x = alt[0].position.x - 1;
+        alt[1].position.z = alt[0].position.z;
+        
+        alt[2].position.x = alt[1].position.x - 1;
+        alt[2].position.z = alt[1].position.z;
+        
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
@@ -204,12 +270,16 @@ void tick_input(GLFWwindow *window) {
         bomb.position.y = plane.position.y -2;
         bomb.position.z = obs[0].position.z;
     }
-    if(up)
+    if(w) // moves forward
     {
+        plane.speed += 0.01;
         plane.position.y += 0.2;
         sc[0].position.y = plane.position.y - 5;
         sc[1].position.y = plane.position.y - 5;
         sc[2].position.y = plane.position.y - 5;
+        alt[0].position.y = plane.position.y - 5;
+        alt[1].position.y = plane.position.y - 5;
+        alt[2].position.y = plane.position.y - 5;
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
@@ -241,6 +311,17 @@ void tick_elements() {
     sc[0].val = scu;
     sc[1].val = sct;
     sc[2].val = sch;
+
+    if(altitude >= 999)
+        altitude = 999;    
+
+    altu = altitude%10;
+    altt = (altitude/10)%10;
+    alth = (altitude/100)%10; 
+    alt[0].val = altu;
+    alt[1].val = altt;
+    alt[2].val = alth;
+
     fuel -= 0.01;
     fuel_bar.f = fuel;
 
@@ -248,6 +329,15 @@ void tick_elements() {
     fuel_bar.position.y = sc[1].position.y -2;
     fuel_bar.position.z = sc[1].position.z;
 
+    alt[0].position.x = sc[0].position.x + 5;
+    alt[1].position.x = sc[1].position.x  + 5;
+    alt[2].position.x = sc[2].position.x + 5;
+    alt[0].position.y = sc[0].position.y;
+    alt[0].position.z = sc[0].position.z;
+    alt[1].position.y = sc[0].position.y;
+    alt[2].position.z = sc[0].position.z;
+
+    
     
    
 }
@@ -273,6 +363,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
     sc[2]       = Score(screen_center_x - 2, -8, -2, sch, COLOR_BLACK);
+    
+    alt[0]      = Score(screen_center_x+5, -8, -2, altu, COLOR_BLACK);
+    alt[1]      = Score(screen_center_x - 1+5, -8, -2, altt, COLOR_BLACK);
+    alt[2]      = Score(screen_center_x - 2+5, -8, -2, alth, COLOR_BLACK);
+    
     fuel_bar    = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
     
     

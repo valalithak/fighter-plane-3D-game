@@ -1,4 +1,5 @@
 #include "plane.h"
+#include "score.h"
 #include "main.h"
 
 Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
@@ -7,9 +8,10 @@ Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
     this->roll = 0;
     this->pitch = 0;
     this->yaw = 0;
-    this->speed = 0.02;
+    this->speed = 5;
     this->acc_g = 0.1f;
     this->health = 100;
+    this->gravity = false;
 
     // For 2-d Top view at z = 0
     static const GLfloat buffer_0[] = {
@@ -280,6 +282,14 @@ void Plane::set_position(float x, float y, float z) {
 }
 
 void Plane::tick() {
+   if(this->position.z > 0){
+      this->position.z -= 0.1;
+      this->gravity = true;
+   }
+   else  
+      this->gravity = false;
+
+        
 
 }
 

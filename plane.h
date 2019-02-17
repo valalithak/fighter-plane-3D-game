@@ -19,6 +19,7 @@ public:
     double speed;
     double acc_g;
     double health;
+    bool gravity;
 private:
     VAO *object0;
     VAO *object1;
