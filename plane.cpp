@@ -247,7 +247,7 @@ void Plane::draw(glm::mat4 VP) {
     glm::mat4 rotate2    = glm::rotate((float) (this->yaw * M_PI / 180.0f), glm::vec3(0, 0, 1));
    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
    //rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
-   Matrices.model *= (translate * rotate1 * rotate2);
+   Matrices.model *= (translate * rotate2 * rotate1);
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object0);

@@ -18,7 +18,7 @@ GLFWwindow *window;
 /**************************
 * Customizable functions *
 **************************/
-#define NUM_OBSTACLES 20
+#define NUM_OBSTACLES 50
 
 //Ball ball1;
 Plane plane;
@@ -39,6 +39,7 @@ int scu, sct, sch;
 int altu, altt, alth;
 int fuel = 2000;
 int altitude = 100;
+int jump = 0;
 
 Timer t60(1.0 / 60);
 
@@ -131,25 +132,6 @@ void draw() {
     if(view!=1)
          plane.draw(VP);
 
-    if(plane.gravity)
-    {
-        altitude -=1;
-        altu = altitude%10;
-        altt = (altitude/10)%10;
-        alth = (altitude/100)%10; 
-        alt[0].val = altu;
-        alt[1].val = altt;
-        alt[2].val = alth;
-        sc[0].position.z = plane.position.z;
-        sc[1].position.z = plane.position.z;
-        sc[2].position.z = plane.position.z;
-        alt[0].position.z = plane.position.z;
-        alt[1].position.z = plane.position.z;
-        alt[2].position.z = plane.position.z;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y -2;
-        fuel_bar.position.z = sc[1].position.z;
-    }
     
 }
 
@@ -195,6 +177,7 @@ void tick_input(GLFWwindow *window) {
 
     if (space)
     {
+        jump = 1;
         altitude += 3;
         // plane.speed += 0.01;
         plane.position.z += plane.speed/20;
@@ -209,6 +192,8 @@ void tick_input(GLFWwindow *window) {
         fuel_bar.position.z = sc[1].position.z;
 
     }
+    if(!space)
+        jump = 0;
        
     if (a) {
         // plane.position.x -= 0.1 * cos(plane.pitch * M_PI / 180);
@@ -283,13 +268,20 @@ void tick_input(GLFWwindow *window) {
     if(w) // moves forward
     {
         plane.speed += 0.01;
-        plane.position.y += 0.2;
-        sc[0].position.y = plane.position.y - 5;
-        sc[1].position.y = plane.position.y - 5;
-        sc[2].position.y = plane.position.y - 5;
-        alt[0].position.y = plane.position.y - 5;
-        alt[1].position.y = plane.position.y - 5;
-        alt[2].position.y = plane.position.y - 5;
+        float a = (plane.yaw*3.14)/180;
+        plane.position.y += 0.1*cos(a);
+        plane.position.x -= 0.1*sin(a);
+        
+        sc[0].position.x -= 0.1*sin(a);
+        sc[1].position.x -= 0.1*sin(a);
+        sc[2].position.x -= 0.1*sin(a);
+        
+        sc[0].position.y = plane.position.y - 5*cos(a);
+        sc[1].position.y = plane.position.y -5*cos(a);
+        sc[2].position.y = plane.position.y - 5*cos(a);
+        alt[0].position.y = plane.position.y - 5*cos(a);
+        alt[1].position.y = plane.position.y - 5*cos(a);
+        alt[2].position.y = plane.position.y - 5*cos(a);
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
@@ -347,6 +339,26 @@ void tick_elements() {
     alt[1].position.y = sc[0].position.y;
     alt[2].position.z = sc[0].position.z;
 
+     if(plane.gravity && jump == 0)
+    {
+        altitude -=3;
+        plane.position.z -= plane.speed/20;
+        altu = altitude%10;
+        altt = (altitude/10)%10;
+        alth = (altitude/100)%10; 
+        alt[0].val = altu;
+        alt[1].val = altt;
+        alt[2].val = alth;
+        sc[0].position.z = plane.position.z;
+        sc[1].position.z = plane.position.z;
+        sc[2].position.z = plane.position.z;
+        alt[0].position.z = plane.position.z;
+        alt[1].position.z = plane.position.z;
+        alt[2].position.z = plane.position.z;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+    }
     
     
    

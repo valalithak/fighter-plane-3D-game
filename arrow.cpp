@@ -7,7 +7,7 @@ Arrow::Arrow(float x, float y, float z, int index, color_t color) {
     this->rotation  = 0;
     this->index = index;
     GLfloat b = 0.2; // basesize = 2b
-    GLfloat h = -0.3; // basesize = 2b
+    GLfloat h = -0.3; // sbasesize = 2b
 
     // For 2-d Top view at z = 0
     static const GLfloat base[] = {
