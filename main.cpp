@@ -275,16 +275,28 @@ void tick_input(GLFWwindow *window) {
         sc[0].position.x -= 0.1*sin(a);
         sc[1].position.x -= 0.1*sin(a);
         sc[2].position.x -= 0.1*sin(a);
-        
-        sc[0].position.y = plane.position.y - 5*cos(a);
-        sc[1].position.y = plane.position.y -5*cos(a);
-        sc[2].position.y = plane.position.y - 5*cos(a);
-        alt[0].position.y = plane.position.y - 5*cos(a);
-        alt[1].position.y = plane.position.y - 5*cos(a);
-        alt[2].position.y = plane.position.y - 5*cos(a);
+        if(cos(a)>0){
+        sc[0].position.y = plane.position.y - 5*cos(a) -5;
+        sc[1].position.y = plane.position.y -5*cos(a) - 5;
+        sc[2].position.y = plane.position.y - 5*cos(a) - 5;
+        alt[0].position.y = plane.position.y - 5*cos(a) - 5;
+        alt[1].position.y = plane.position.y - 5*cos(a) - 5;
+        alt[2].position.y = plane.position.y - 5*cos(a) -5;
         fuel_bar.position.x = sc[1].position.x;
         fuel_bar.position.y = sc[1].position.y -2;
         fuel_bar.position.z = sc[1].position.z;
+        }
+        else{
+        sc[0].position.y = plane.position.y - 5*cos(a) +5;
+        sc[1].position.y = plane.position.y -5*cos(a) + 5;
+        sc[2].position.y = plane.position.y - 5*cos(a) + 5;
+        alt[0].position.y = plane.position.y - 5*cos(a) + 5;
+        alt[1].position.y = plane.position.y - 5*cos(a) + 5;
+        alt[2].position.y = plane.position.y - 5*cos(a) +5;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y -2;
+        fuel_bar.position.z = sc[1].position.z;
+        }
 
 
     }
@@ -376,12 +388,12 @@ void initGL(GLFWwindow *window, int width, int height) {
     bomb        = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for(int i=0; i<NUM_OBSTACLES/2; i++)
     {
-        obs[i]         = Obstacle(2*i + rand()%6, 0, -1*(i+rand()%2), COLOR_GOLD);
-        arrow[i]       = Arrow(2*i + rand()%6, 0, -1*(i+rand()%2)+0.5, i, COLOR_RED);
+        obs[i]         = Obstacle(2*i + rand()%6, -5, -1*(i+rand()%2), COLOR_GOLD);
+        arrow[i]       = Arrow(2*i + rand()%6, -5, -1*(i+rand()%2)+0.5, i, COLOR_RED);
     }
     for(int i=NUM_OBSTACLES/2; i<NUM_OBSTACLES; i++)
     {
-        obs[i]         = Obstacle(-2*(i-10) + rand()%6, 0, -1*((i-10)+rand()%2), COLOR_GOLD);
+        obs[i]         = Obstacle(-2*(i-10) + rand()%6, -5, -1*((i-10)+rand()%2), COLOR_GOLD);
     }
     sc[0]       = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1]       = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);

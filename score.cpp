@@ -7,9 +7,9 @@ using namespace std;
 Score::Score(float x_coord, float y_coord, float z_coord, int val, color_t color)
 {
     this->val = val;
-    float y = 2*0.3;
-    float x= 2*0.05;
-    float d = 2*0.15;
+    float y = 4*0.3;
+    float x= 4*0.05;
+    float d = 4*0.15;
     this->position = glm::vec3(x_coord, y_coord, 0);
     GLfloat vertex_buffer_data[7][18] = {
 
