@@ -66,7 +66,7 @@ void draw()
         float angle = (plane.rotation * 3.14) / 180;
 
         glm::vec3 eye(plane.position.x + 2 * sin(angle), plane.position.y, plane.position.z + 2 * cos(angle));
-        glm::vec3 target(plane.position.x, plane.position.y + 1.2, plane.position.z - 0.6);
+        glm::vec3 target(plane.position.x, plane.position.y + 1.2, plane.position.z);
         glm::vec3 up(0, 1, 0);
         Matrices.view = glm::lookAt(eye, target, up);
     }
@@ -113,6 +113,16 @@ void draw()
         alt[1].draw(VP);
         alt[2].draw(VP);
         fuel_bar.draw(VP);
+        for(int j = 0; j<NUM_OBSTACLES; j++)
+        {
+            if(obs[j].shot == false)
+            {
+                arrow[j].draw(VP);
+                break;
+            }
+            else
+                continue;
+        }
         arrow[0].draw(VP);
     }
     if (bomb.appear)
@@ -298,6 +308,13 @@ void tick_elements()
     // }
     plane.tick();
     bomb.tick();
+    for(int j = 0; j<NUM_OBSTACLES; j++)
+    {
+        arrow[j].position.x = obs[j].position.x;
+        arrow[j].position.y = obs[j].position.y + 2;
+        arrow[j].position.z = obs[j].position.z;
+
+    }
 
     if (plane.speed * 10 <= 999)
         score = plane.speed * 10;
@@ -384,6 +401,20 @@ void tick_elements()
         fuel_bar.position.y = sc[1].position.y - 2;
         fuel_bar.position.z = sc[1].position.z;
     }
+     if (plane.gravity && jump == 0 && view == 2)
+    {
+        altitude -= 3;
+        plane.position.z -= plane.speed / 20;
+        altu = altitude % 10;
+        altt = (altitude / 10) % 10;
+        alth = (altitude / 100) % 10;
+        alt[0].val = altu;
+        alt[1].val = altt;
+        alt[2].val = alth;
+        fuel_bar.position.x = sc[1].position.x;
+        fuel_bar.position.y = sc[1].position.y - 2;
+        fuel_bar.position.z = sc[1].position.z;
+    }
 
     if (view == 1)
     {
@@ -450,14 +481,13 @@ void initGL(GLFWwindow *window, int width, int height)
     water = Water(0, 0, COLOR_WATER);
     plane = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
     bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
-    for (int i = 0; i < NUM_OBSTACLES / 2; i++)
+    for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        obs[i] = Obstacle(3 * i + rand() % 100, 2 * i, -(i + rand() % 10), COLOR_GOLD);
+        if(i%2==0)
+            obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, COLOR_GOLD);
         arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i, COLOR_RED);
-    }
-    for (int i = NUM_OBSTACLES / 2; i < NUM_OBSTACLES; i++)
-    {
-        obs[i] = Obstacle(-1 * (i - NUM_OBSTACLES / 2) + rand() % 100, 2 * i, -1 * ((i - NUM_OBSTACLES / 2) + rand() % 2), COLOR_GOLD);
+        if(i%2==1)
+        obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, COLOR_GOLD);
     }
     sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
