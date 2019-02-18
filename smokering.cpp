@@ -23,22 +23,22 @@ Smokering::Smokering(float x, float y, float z, color_t color) {
         vertex_buffer_data[i + 5] = this->radius * sin(theta);
         
         vertex_buffer_data[i + 6] = 0;
-        vertex_buffer_data[i + 7] = this->radius * cos(theta + (2 * M_PI / n));
-        vertex_buffer_data[i + 8] = this->radius * sin(theta + (2 * M_PI / n));
+        vertex_buffer_data[i + 7] = this->radius * cos(theta + (2 * 3.14159 / n));
+        vertex_buffer_data[i + 8] = this->radius * sin(theta + (2 * 3.14159 / n));
         
         vertex_buffer_data[i + 9] = 0;
         vertex_buffer_data[i + 10] = this->radius * cos(theta) + 0.3;
         vertex_buffer_data[i + 11] = this->radius * sin(theta);
 
         vertex_buffer_data[i + 12] = 0;
-        vertex_buffer_data[i + 13] = this->radius * cos(theta + (2 * M_PI / n)) + 0.3;
-        vertex_buffer_data[i + 14] = this->radius * sin(theta + (2 * M_PI / n)) + 0.3;
+        vertex_buffer_data[i + 13] = this->radius * cos(theta + (2 * 3.14159 / n)) + 0.3;
+        vertex_buffer_data[i + 14] = this->radius * sin(theta + (2 * 3.14159 / n)) + 0.3;
 
         vertex_buffer_data[i + 15] = 0;
-        vertex_buffer_data[i + 16] = this->radius * cos(theta + (2 * M_PI / n));
-        vertex_buffer_data[i + 17] = this->radius * sin(theta + (2 * M_PI / n));
+        vertex_buffer_data[i + 16] = this->radius * cos(theta + (2 * 3.14159 / n));
+        vertex_buffer_data[i + 17] = this->radius * sin(theta + (2 * 3.14159 / n));
 
-        theta += (2 * M_PI) / n;
+        theta += (2 * 3.14159) / n;
     }
 
     this->object = create3DObject(GL_TRIANGLES, 6 * n, vertex_buffer_data, color, GL_FILL);
@@ -49,7 +49,7 @@ Smokering::Smokering(float x, float y, float z, color_t color) {
 void Smokering::draw(glm::mat4 VP) {
     Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
-    glm::mat4 rotate    = glm::rotate((float) (this->rotation * M_PI / 180.0f), glm::vec3(0, 0, 1));
+    glm::mat4 rotate    = glm::rotate((float) (this->rotation * 3.14159 / 180.0f), glm::vec3(0, 0, 1));
     // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
     // rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
     Matrices.model *= (translate * rotate);

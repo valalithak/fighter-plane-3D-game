@@ -13,6 +13,7 @@ Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
     this->health = 100;
     this->gravity = false;
     this->lives = 10;
+    this->loopback = false;
 
     // For 2-d Top view at z = 0
     static const GLfloat buffer_0[] = {
@@ -246,9 +247,10 @@ void Plane::draw(glm::mat4 VP) {
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     glm::mat4 rotate1    = glm::rotate((float) (this->pitch * M_PI / 180.0f), glm::vec3(0, 1, 0));
     glm::mat4 rotate2    = glm::rotate((float) (this->yaw * M_PI / 180.0f), glm::vec3(0, 0, 1));
+    glm::mat4 rotate3    = glm::rotate((float) (this->roll * M_PI / 180.0f), glm::vec3(1, 0, 0));
    // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
    //rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
-   Matrices.model *= (translate * rotate2 * rotate1);
+   Matrices.model *= (translate * rotate2 * rotate1*rotate3);
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object0);
@@ -284,13 +286,15 @@ void Plane::set_position(float x, float y, float z) {
 }
 
 void Plane::tick() {
-   // if(this->position.z > 0){
-   //    this->position.z -= 0.1;
-   //    this->gravity = true;
-   // }
-   // else  
-   //    this->gravity = false;
-
+  if(this->loopback)
+  {
+     if(this->roll < 360)
+         this->roll+=10;
+  }
+  if(this->roll == 360){
+      this->loopback = false;
+      this->roll = 0;
+  }
         
 
 }

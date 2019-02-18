@@ -181,10 +181,12 @@ void tick_input(GLFWwindow *window)
     {
         plane.gravity = false;
     }
+    if(space)
+        plane.loopback = true;
 
-    if (space)
+    if (up)
     {
-        jump = 1;
+        //jump = 1;
         altitude += 3;
         // plane.speed += 0.01;
         plane.position.z += plane.speed / 20;
@@ -201,8 +203,27 @@ void tick_input(GLFWwindow *window)
             fuel_bar.position.z = sc[1].position.z;
         }
     }
-    if (!space)
-        jump = 0;
+     if (down)
+    {
+        //jump = 1;
+        altitude -= 3;
+        // plane.speed += 0.01;
+        plane.position.z -= plane.speed / 20;
+        if (view == 0)
+        {
+            sc[0].position.z = plane.position.z;
+            sc[1].position.z = plane.position.z;
+            sc[2].position.z = plane.position.z;
+            alt[0].position.z = plane.position.z;
+            alt[1].position.z = plane.position.z;
+            alt[2].position.z = plane.position.z;
+            fuel_bar.position.x = sc[1].position.x;
+            fuel_bar.position.y = sc[1].position.y - 2;
+            fuel_bar.position.z = sc[1].position.z;
+        }
+    }
+    //if (!space)
+      //  jump = 0;
 
     if (q)
     {
@@ -315,6 +336,10 @@ void tick_input(GLFWwindow *window)
         }
        
     }
+    if(!w)
+    {
+        plane.speed -= 0.005;
+    }
 }
 
 void tick_elements()
@@ -376,68 +401,68 @@ void tick_elements()
     alt[1].position.y = sc[0].position.y;
     alt[2].position.z = sc[0].position.z;
 
-    if (plane.gravity && jump == 0 && view == 0)
-    {
-        altitude -= 3;
-        plane.position.z -= plane.speed / 20;
-        altu = altitude % 10;
-        altt = (altitude / 10) % 10;
-        alth = (altitude / 100) % 10;
-        alt[0].val = altu;
-        alt[1].val = altt;
-        alt[2].val = alth;
-        sc[0].position.z = plane.position.z;
-        sc[1].position.z = plane.position.z;
-        sc[2].position.z = plane.position.z;
-        alt[0].position.z = plane.position.z;
-        alt[1].position.z = plane.position.z;
-        alt[2].position.z = plane.position.z;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
-    }
-    if (plane.gravity && jump == 0 && view == 1)
-    {
-        altitude -= 3;
-        plane.position.z -= plane.speed / 20;
-        altu = altitude % 10;
-        altt = (altitude / 10) % 10;
-        alth = (altitude / 100) % 10;
-        alt[0].val = altu;
-        alt[1].val = altt;
-        alt[2].val = alth;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
-    }
-    if (plane.gravity && jump == 0 && view == 3)
-    {
-        altitude -= 3;
-        plane.position.z -= plane.speed / 20;
-        altu = altitude % 10;
-        altt = (altitude / 10) % 10;
-        alth = (altitude / 100) % 10;
-        alt[0].val = altu;
-        alt[1].val = altt;
-        alt[2].val = alth;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
-    }
-     if (plane.gravity && jump == 0 && view == 2)
-    {
-        altitude -= 3;
-        plane.position.z -= plane.speed / 20;
-        altu = altitude % 10;
-        altt = (altitude / 10) % 10;
-        alth = (altitude / 100) % 10;
-        alt[0].val = altu;
-        alt[1].val = altt;
-        alt[2].val = alth;
-        fuel_bar.position.x = sc[1].position.x;
-        fuel_bar.position.y = sc[1].position.y - 2;
-        fuel_bar.position.z = sc[1].position.z;
-    }
+    // if (plane.gravity && jump == 0 && view == 0)
+    // {
+    //     altitude -= 3;
+    //     plane.position.z -= plane.speed / 20;
+    //     altu = altitude % 10;
+    //     altt = (altitude / 10) % 10;
+    //     alth = (altitude / 100) % 10;
+    //     alt[0].val = altu;
+    //     alt[1].val = altt;
+    //     alt[2].val = alth;
+    //     sc[0].position.z = plane.position.z;
+    //     sc[1].position.z = plane.position.z;
+    //     sc[2].position.z = plane.position.z;
+    //     alt[0].position.z = plane.position.z;
+    //     alt[1].position.z = plane.position.z;
+    //     alt[2].position.z = plane.position.z;
+    //     fuel_bar.position.x = sc[1].position.x;
+    //     fuel_bar.position.y = sc[1].position.y - 2;
+    //     fuel_bar.position.z = sc[1].position.z;
+    // }
+    // if (plane.gravity && jump == 0 && view == 1)
+    // {
+    //     altitude -= 3;
+    //     plane.position.z -= plane.speed / 20;
+    //     altu = altitude % 10;
+    //     altt = (altitude / 10) % 10;
+    //     alth = (altitude / 100) % 10;
+    //     alt[0].val = altu;
+    //     alt[1].val = altt;
+    //     alt[2].val = alth;
+    //     fuel_bar.position.x = sc[1].position.x;
+    //     fuel_bar.position.y = sc[1].position.y - 2;
+    //     fuel_bar.position.z = sc[1].position.z;
+    // }
+    // if (plane.gravity && jump == 0 && view == 3)
+    // {
+    //     altitude -= 3;
+    //     plane.position.z -= plane.speed / 20;
+    //     altu = altitude % 10;
+    //     altt = (altitude / 10) % 10;
+    //     alth = (altitude / 100) % 10;
+    //     alt[0].val = altu;
+    //     alt[1].val = altt;
+    //     alt[2].val = alth;
+    //     fuel_bar.position.x = sc[1].position.x;
+    //     fuel_bar.position.y = sc[1].position.y - 2;
+    //     fuel_bar.position.z = sc[1].position.z;
+    // }
+    //  if (plane.gravity && jump == 0 && view == 2)
+    // {
+    //     altitude -= 3;
+    //     plane.position.z -= plane.speed / 20;
+    //     altu = altitude % 10;
+    //     altt = (altitude / 10) % 10;
+    //     alth = (altitude / 100) % 10;
+    //     alt[0].val = altu;
+    //     alt[1].val = altt;
+    //     alt[2].val = alth;
+    //     fuel_bar.position.x = sc[1].position.x;
+    //     fuel_bar.position.y = sc[1].position.y - 2;
+    //     fuel_bar.position.z = sc[1].position.z;
+    // }
 
     if (view == 1)
     {
