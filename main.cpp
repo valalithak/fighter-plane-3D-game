@@ -8,6 +8,7 @@
 #include "bomb.h"
 #include "fuel.h"
 #include "arrow.h"
+#include "smokering.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ Score alt[3];
 Bomb bomb;
 Fuel fuel_bar;
 Arrow arrow[NUM_OBSTACLES];
-
+Smokering sring;
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
@@ -129,6 +130,8 @@ void draw()
         bomb.draw(VP);
     if (view != 1)
         plane.draw(VP);
+
+    sring.draw(VP);
 }
 
 void tick_input(GLFWwindow *window)
@@ -306,6 +309,8 @@ void tick_elements()
     // if(fuel<=0.0) {
     //     quit(window);
     // }
+    bool f = sring.isPlane(plane);
+    cout << f << endl;
     plane.tick();
     bomb.tick();
     for(int j = 0; j<NUM_OBSTACLES; j++)
@@ -498,6 +503,7 @@ void initGL(GLFWwindow *window, int width, int height)
     alt[2] = Score(screen_center_x - 2 + 5, -8, -2, alth, COLOR_BLACK);
 
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
+    sring    = Smokering(0, 4, 10, COLOR_LIGHTGREY);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
