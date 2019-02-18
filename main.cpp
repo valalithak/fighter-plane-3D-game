@@ -9,6 +9,7 @@
 #include "fuel.h"
 #include "arrow.h"
 #include "smokering.h"
+#include "missile.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ Obstacle obs[NUM_OBSTACLES];
 Score sc[3];
 Score alt[3];
 Bomb bomb;
+Missile mis;
 Fuel fuel_bar;
 Arrow arrow[NUM_OBSTACLES];
 Smokering sring;
@@ -132,6 +134,7 @@ void draw()
         plane.draw(VP);
 
     sring.draw(VP);
+    mis.draw(VP);
 }
 
 void tick_input(GLFWwindow *window)
@@ -504,6 +507,7 @@ void initGL(GLFWwindow *window, int width, int height)
 
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
     sring    = Smokering(0, 4, 10, COLOR_LIGHTGREY);
+    mis      = Missile(0, 4, 0, 0.1, COLOR_GREEN);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
