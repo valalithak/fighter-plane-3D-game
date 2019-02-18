@@ -12,6 +12,7 @@ Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
     this->acc_g = 0.1f;
     this->health = 100;
     this->gravity = false;
+    this->lives = 10;
 
     // For 2-d Top view at z = 0
     static const GLfloat buffer_0[] = {

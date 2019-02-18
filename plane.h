@@ -20,6 +20,7 @@ public:
     double acc_g;
     double health;
     bool gravity;
+    float lives;
 private:
     VAO *object0;
     VAO *object1;

@@ -42,6 +42,7 @@ int altu, altt, alth;
 int fuel = 2000;
 int altitude = 100;
 int jump = 0;
+int ring_pass = 0;
 
 Timer t60(1.0 / 60);
 
@@ -134,7 +135,8 @@ void draw()
         plane.draw(VP);
 
     sring.draw(VP);
-    mis.draw(VP);
+    if(mis.shot == true)
+        mis.draw(VP);
 }
 
 void tick_input(GLFWwindow *window)
@@ -145,6 +147,7 @@ void tick_input(GLFWwindow *window)
     int down = glfwGetKey(window, GLFW_KEY_DOWN);
     int space = glfwGetKey(window, GLFW_KEY_SPACE);
     int w = glfwGetKey(window, GLFW_KEY_W);
+    int m = glfwGetKey(window, GLFW_KEY_M);
     int e = glfwGetKey(window, GLFW_KEY_E);
     int a = glfwGetKey(window, GLFW_KEY_A);
     int d = glfwGetKey(window, GLFW_KEY_D);
@@ -266,6 +269,14 @@ void tick_input(GLFWwindow *window)
         bomb.position.y = plane.position.y - 2;
         bomb.position.z = obs[0].position.z;
     }
+    if (m)
+    {
+        mis.shot = true;
+        mis.position.x = plane.position.x;
+        mis.position.y = plane.position.y;
+        mis.position.z = plane.position.z;
+    }
+
     if (w) // moves forward
     {
         plane.speed += 0.01;
@@ -312,10 +323,14 @@ void tick_elements()
     // if(fuel<=0.0) {
     //     quit(window);
     // }
-    bool f = sring.isPlane(plane);
-    cout << f << endl;
+    bool ring_pass_bool = sring.isPlane(plane);
+    if(ring_pass == 0 && ring_pass_bool == 1){
+        plane.lives +=1;
+        ring_pass = 1;
+    }
     plane.tick();
     bomb.tick();
+    mis.tick(plane);
     for(int j = 0; j<NUM_OBSTACLES; j++)
     {
         arrow[j].position.x = obs[j].position.x;
@@ -506,8 +521,8 @@ void initGL(GLFWwindow *window, int width, int height)
     alt[2] = Score(screen_center_x - 2 + 5, -8, -2, alth, COLOR_BLACK);
 
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
-    sring    = Smokering(0, 4, 10, COLOR_LIGHTGREY);
-    mis      = Missile(0, 4, 0, 0.1, COLOR_GREEN);
+    sring    = Smokering(0, 200, 10, COLOR_LIGHTGREY);
+    mis      = Missile(0, 4, 0, 0.1, COLOR_FIRE);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -555,6 +570,11 @@ int main(int argc, char **argv)
 
             tick_elements();
             tick_input(window);
+
+            char titleString[128];
+            sprintf(titleString, "Lives: %d", (int)plane.lives);
+           
+            glfwSetWindowTitle(window,titleString);
         }
 
         // Poll for Keyboard and mouse events
