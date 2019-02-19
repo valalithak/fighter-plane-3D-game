@@ -1,6 +1,7 @@
 #include "plane.h"
 #include "score.h"
 #include "main.h"
+#include<bits/stdc++.h>
 
 Plane::Plane(float x, float y, float z, color_t color, color_t color2) {
     this->position = glm::vec3(x, y, z);
@@ -286,10 +287,11 @@ void Plane::set_position(float x, float y, float z) {
 }
 
 void Plane::tick() {
+  
   if(this->loopback)
   {
      if(this->roll < 360)
-         this->roll+=10;
+         this->roll+=5;
   }
   if(this->roll == 360){
       this->loopback = false;

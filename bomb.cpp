@@ -68,5 +68,16 @@ void Bomb::set_position(float x, float y, float z) {
 }
 
 void Bomb::tick() {
+    int count = 250;
+    if(count > 0)
+    {
+        this->position.z -= 0.4;
+        count--;
+    }
+    if(count==0)
+    {
+        this->appear = false;
+        count = 250;
+    }
   
 }

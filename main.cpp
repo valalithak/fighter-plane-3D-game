@@ -169,10 +169,7 @@ void tick_input(GLFWwindow *window)
         plane.pitch -= 1;
     if (d)
         plane.pitch += 1;
-    if (q)
-    {
-        plane.roll += 1;
-    }
+    
     if (altitude > 110)
     {
         plane.gravity = true;
@@ -288,7 +285,7 @@ void tick_input(GLFWwindow *window)
         bomb.appear = true;
         bomb.position.x = plane.position.x;
         bomb.position.y = plane.position.y - 2;
-        bomb.position.z = obs[0].position.z;
+        bomb.position.z = plane.position.z;
     }
     if (m)
     {
@@ -345,6 +342,7 @@ void tick_input(GLFWwindow *window)
 void tick_elements()
 {
 
+  
     // if(fuel<=0.0) {
     //     quit(window);
     // }
@@ -354,7 +352,8 @@ void tick_elements()
         ring_pass = 1;
     }
     plane.tick();
-    bomb.tick();
+    if(bomb.appear)
+        bomb.tick();
     mis.tick(plane);
     for(int j = 0; j<NUM_OBSTACLES; j++)
     {
