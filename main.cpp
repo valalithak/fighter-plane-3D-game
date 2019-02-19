@@ -122,12 +122,12 @@ void draw()
             if(obs[j].shot == false)
             {
                 arrow[j].draw(VP);
-                break;
+                //break;
             }
             else
                 continue;
         }
-        arrow[0].draw(VP);
+        //arrow[0].draw(VP);
     }
     if (bomb.appear)
         bomb.draw(VP);
@@ -357,9 +357,11 @@ void tick_elements()
     mis.tick(plane);
     for(int j = 0; j<NUM_OBSTACLES; j++)
     {
+        if(view==0){
         arrow[j].position.x = obs[j].position.x;
-        arrow[j].position.y = obs[j].position.y + 2;
-        arrow[j].position.z = obs[j].position.z;
+        arrow[j].position.y = obs[j].position.y;
+        arrow[j].position.z = obs[j].position.z+4;
+        }
 
     }
 
@@ -532,7 +534,7 @@ void initGL(GLFWwindow *window, int width, int height)
     {
         if(i%2==0)
             obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, COLOR_GOLD);
-        arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i, COLOR_RED);
+        arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i);
         if(i%2==1)
         obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, COLOR_GOLD);
     }
