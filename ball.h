@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "plane.h"
 #ifndef BALL_H
 #define BALL_H
 
@@ -12,8 +12,9 @@ public:
     float rotation;
     void draw(glm::mat4 VP);
     void set_position(float x, float y);
-    void tick();
+    bool tick_plane(Plane plane);
     double speed;
+    bool taken;
 private:
     VAO *object;
 };

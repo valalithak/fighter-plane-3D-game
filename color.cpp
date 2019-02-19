@@ -13,3 +13,4 @@ const color_t COLOR_LIGHTGREY = { 136, 136, 136 };
 const color_t COLOR_GOLD = { 218, 165, 32 };
 const color_t COLOR_FIRE = { 240,80,0};
 const color_t COLOR_WHITE = { 255,255,255};
+const color_t COLOR_YELLOW = { 240, 240, 0 };

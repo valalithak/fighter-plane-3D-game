@@ -22,7 +22,7 @@ GLFWwindow *window;
 **************************/
 #define NUM_OBSTACLES 100
 
-//Ball ball1;
+Ball fuel_powerup;
 Plane plane;
 Water water;
 Obstacle obs[NUM_OBSTACLES];
@@ -104,7 +104,7 @@ void draw()
     glm::mat4 MVP; // MVP = Projection * View * Model
 
     // Scene render
-    //ball1.draw(VP);
+    //fuel_powerup.draw(VP);
 
     water.draw(VP);
     for (int i = 0; i < NUM_OBSTACLES; i++)
@@ -133,8 +133,6 @@ void draw()
             else
                 continue;
         }
-
-        //arrow[0].draw(VP);
     }
     if (bomb.appear)
         bomb.draw(VP);
@@ -144,6 +142,9 @@ void draw()
     sring.draw(VP);
     if (mis.shot == true)
         mis.draw(VP);
+
+    if (fuel_powerup.taken == false)
+        fuel_powerup.draw(VP);
 }
 
 void tick_input(GLFWwindow *window)
@@ -190,9 +191,9 @@ void tick_input(GLFWwindow *window)
 
     if (up)
     {
-        //jump = 1;
+
         altitude += 3;
-        // plane.speed += 0.01;
+
         plane.position.z += plane.speed / 20;
         if (view == 0)
         {
@@ -209,9 +210,9 @@ void tick_input(GLFWwindow *window)
     }
     if (down)
     {
-        //jump = 1;
+
         altitude -= 3;
-        // plane.speed += 0.01;
+
         plane.position.z -= plane.speed / 20;
         if (view == 0)
         {
@@ -226,8 +227,6 @@ void tick_input(GLFWwindow *window)
             fuel_bar.position.z = sc[1].position.z;
         }
     }
-    //if (!space)
-    //  jump = 0;
 
     if (q)
     {
@@ -362,6 +361,17 @@ void tick_elements()
             cout << "missile hit" << endl;
         }
     }
+    if (fuel_powerup.taken == false)
+    {
+
+        bool coll = fuel_powerup.tick_plane(plane);
+        if (coll == true)
+        {
+            fuel_powerup.taken = true;
+            fuel = 2000;
+            cout << "fuelled" << endl;
+        }
+    }
     if (bomb.appear == true)
     {
 
@@ -435,69 +445,6 @@ void tick_elements()
     alt[1].position.y = sc[0].position.y;
     alt[2].position.z = sc[0].position.z;
 
-    // if (plane.gravity && jump == 0 && view == 0)
-    // {
-    //     altitude -= 3;
-    //     plane.position.z -= plane.speed / 20;
-    //     altu = altitude % 10;
-    //     altt = (altitude / 10) % 10;
-    //     alth = (altitude / 100) % 10;
-    //     alt[0].val = altu;
-    //     alt[1].val = altt;
-    //     alt[2].val = alth;
-    //     sc[0].position.z = plane.position.z;
-    //     sc[1].position.z = plane.position.z;
-    //     sc[2].position.z = plane.position.z;
-    //     alt[0].position.z = plane.position.z;
-    //     alt[1].position.z = plane.position.z;
-    //     alt[2].position.z = plane.position.z;
-    //     fuel_bar.position.x = sc[1].position.x;
-    //     fuel_bar.position.y = sc[1].position.y - 2;
-    //     fuel_bar.position.z = sc[1].position.z;
-    // }
-    // if (plane.gravity && jump == 0 && view == 1)
-    // {
-    //     altitude -= 3;
-    //     plane.position.z -= plane.speed / 20;
-    //     altu = altitude % 10;
-    //     altt = (altitude / 10) % 10;
-    //     alth = (altitude / 100) % 10;
-    //     alt[0].val = altu;
-    //     alt[1].val = altt;
-    //     alt[2].val = alth;
-    //     fuel_bar.position.x = sc[1].position.x;
-    //     fuel_bar.position.y = sc[1].position.y - 2;
-    //     fuel_bar.position.z = sc[1].position.z;
-    // }
-    // if (plane.gravity && jump == 0 && view == 3)
-    // {
-    //     altitude -= 3;
-    //     plane.position.z -= plane.speed / 20;
-    //     altu = altitude % 10;
-    //     altt = (altitude / 10) % 10;
-    //     alth = (altitude / 100) % 10;
-    //     alt[0].val = altu;
-    //     alt[1].val = altt;
-    //     alt[2].val = alth;
-    //     fuel_bar.position.x = sc[1].position.x;
-    //     fuel_bar.position.y = sc[1].position.y - 2;
-    //     fuel_bar.position.z = sc[1].position.z;
-    // }
-    //  if (plane.gravity && jump == 0 && view == 2)
-    // {
-    //     altitude -= 3;
-    //     plane.position.z -= plane.speed / 20;
-    //     altu = altitude % 10;
-    //     altt = (altitude / 10) % 10;
-    //     alth = (altitude / 100) % 10;
-    //     alt[0].val = altu;
-    //     alt[1].val = altt;
-    //     alt[2].val = alth;
-    //     fuel_bar.position.x = sc[1].position.x;
-    //     fuel_bar.position.y = sc[1].position.y - 2;
-    //     fuel_bar.position.z = sc[1].position.z;
-    // }
-
     if (view == 1)
     {
         sc[0].position.x = plane.position.x - 2;
@@ -558,7 +505,7 @@ void initGL(GLFWwindow *window, int width, int height)
     /* Objects should be created before any other gl function and shaders */
     // Create the models
 
-    //ball1       = Ball(0, 0, COLOR_RED);
+    fuel_powerup = Ball(-3, 25, COLOR_YELLOW);
     water = Water(0, 0, COLOR_WATER);
     plane = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
     bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
