@@ -43,6 +43,7 @@ int fuel = 2000;
 int altitude = 100;
 int jump = 0;
 int ring_pass = 0;
+int check = 0;
 
 Timer t60(1.0 / 60);
 
@@ -106,8 +107,10 @@ void draw()
     //ball1.draw(VP);
 
     water.draw(VP);
-    for (int i = 0; i < NUM_OBSTACLES; i++)
+    for (int i = 0; i < NUM_OBSTACLES; i++){
+        if(obs[i].shot == false)
         obs[i].draw(VP);
+    }
     if (view == 0 || view == 1 || view == 3)
     {
         sc[0].draw(VP);
@@ -117,16 +120,19 @@ void draw()
         alt[1].draw(VP);
         alt[2].draw(VP);
         fuel_bar.draw(VP);
-        for(int j = 0; j<NUM_OBSTACLES; j++)
+       
+        for(int j = 3; j<NUM_OBSTACLES; j++)
         {
             if(obs[j].shot == false)
             {
                 arrow[j].draw(VP);
-                //break;
+                check = j;
+                break;
             }
             else
                 continue;
         }
+
         //arrow[0].draw(VP);
     }
     if (bomb.appear)
@@ -346,6 +352,17 @@ void tick_elements()
     // if(fuel<=0.0) {
     //     quit(window);
     // }
+    if(mis.shot == true){
+        // cout << mis.position.x << " " << mis.position.y << " " << mis.position.z << endl;
+        // cout << obs[check].position.x << " " << obs[check].position.y << " " << obs[check].position.z << endl;
+        bool coll = obs[check].tick(mis); 
+        if(coll == true && obs[check].shot == false)
+        {
+            obs[check].shot = true;
+            mis.shot = false;
+            cout << "hit" << endl;
+        }
+    }
     bool ring_pass_bool = sring.isPlane(plane);
     if(ring_pass == 0 && ring_pass_bool == 1){
         plane.lives +=1;

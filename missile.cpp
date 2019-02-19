@@ -115,7 +115,7 @@ void Missile::draw(glm::mat4 VP) {
 
 void Missile::tick(Plane plane) {
 
-    int count = 250;
+    int count = 50;
     this->yaw = plane.yaw;
 
 

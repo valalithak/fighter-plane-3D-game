@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "missile.h"
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
@@ -11,7 +11,7 @@ public:
     glm::vec3 position;
     void draw(glm::mat4 VP);
     void set_position(float x, float y, float z);
-    void tick();
+    bool tick(Missile m);
     bool shot;
     float rotation;
 private:
