@@ -107,9 +107,10 @@ void draw()
     //ball1.draw(VP);
 
     water.draw(VP);
-    for (int i = 0; i < NUM_OBSTACLES; i++){
-        if(obs[i].shot == false)
-        obs[i].draw(VP);
+    for (int i = 0; i < NUM_OBSTACLES; i++)
+    {
+        if (obs[i].shot == false)
+            obs[i].draw(VP);
     }
     if (view == 0 || view == 1 || view == 3)
     {
@@ -120,10 +121,10 @@ void draw()
         alt[1].draw(VP);
         alt[2].draw(VP);
         fuel_bar.draw(VP);
-       
-        for(int j = 3; j<NUM_OBSTACLES; j++)
+
+        for (int j = 3; j < NUM_OBSTACLES; j++)
         {
-            if(obs[j].shot == false)
+            if (obs[j].shot == false)
             {
                 arrow[j].draw(VP);
                 check = j;
@@ -141,7 +142,7 @@ void draw()
         plane.draw(VP);
 
     sring.draw(VP);
-    if(mis.shot == true)
+    if (mis.shot == true)
         mis.draw(VP);
 }
 
@@ -175,7 +176,7 @@ void tick_input(GLFWwindow *window)
         plane.pitch -= 1;
     if (d)
         plane.pitch += 1;
-    
+
     if (altitude > 110)
     {
         plane.gravity = true;
@@ -184,7 +185,7 @@ void tick_input(GLFWwindow *window)
     {
         plane.gravity = false;
     }
-    if(space)
+    if (space)
         plane.loopback = true;
 
     if (up)
@@ -206,7 +207,7 @@ void tick_input(GLFWwindow *window)
             fuel_bar.position.z = sc[1].position.z;
         }
     }
-     if (down)
+    if (down)
     {
         //jump = 1;
         altitude -= 3;
@@ -226,7 +227,7 @@ void tick_input(GLFWwindow *window)
         }
     }
     //if (!space)
-      //  jump = 0;
+    //  jump = 0;
 
     if (q)
     {
@@ -337,9 +338,8 @@ void tick_input(GLFWwindow *window)
                 fuel_bar.position.z = sc[1].position.z;
             }
         }
-       
     }
-    if(!w)
+    if (!w)
     {
         plane.speed -= 0.005;
     }
@@ -348,38 +348,54 @@ void tick_input(GLFWwindow *window)
 void tick_elements()
 {
 
-  
     // if(fuel<=0.0) {
     //     quit(window);
     // }
-    if(mis.shot == true){
-        // cout << mis.position.x << " " << mis.position.y << " " << mis.position.z << endl;
-        // cout << obs[check].position.x << " " << obs[check].position.y << " " << obs[check].position.z << endl;
-        bool coll = obs[check].tick(mis); 
-        if(coll == true && obs[check].shot == false)
+    if (mis.shot == true)
+    {
+
+        bool coll = obs[check].tick_m(mis);
+        if (coll == true && obs[check].shot == false)
         {
             obs[check].shot = true;
             mis.shot = false;
-            cout << "hit" << endl;
+            cout << "missile hit" << endl;
+        }
+    }
+    if (bomb.appear == true)
+    {
+
+        bool coll = obs[check].tick_b(bomb);
+        if (coll == true && obs[check].shot == false)
+        {
+            obs[check].shot = true;
+            bomb.appear = false;
+            cout << "bomb hit" << endl;
         }
     }
     bool ring_pass_bool = sring.isPlane(plane);
-    if(ring_pass == 0 && ring_pass_bool == 1){
-        plane.lives +=1;
+    if (ring_pass == 0 && ring_pass_bool == 1)
+    {
+        plane.lives += 1;
         ring_pass = 1;
     }
     plane.tick();
-    if(bomb.appear)
-        bomb.tick();
-    mis.tick(plane);
-    for(int j = 0; j<NUM_OBSTACLES; j++)
+    if (bomb.appear)
     {
-        if(view==0){
-        arrow[j].position.x = obs[j].position.x;
-        arrow[j].position.y = obs[j].position.y;
-        arrow[j].position.z = obs[j].position.z+4;
+        bomb.tick();
+        cout << bomb.position.x << " " << bomb.position.y << " " << bomb.position.z << endl;
+        cout << obs[check].position.x << " " << obs[check].position.y << " " << obs[check].position.z << endl;
+        cout << endl;
+    }
+    mis.tick(plane);
+    for (int j = 0; j < NUM_OBSTACLES; j++)
+    {
+        if (view == 0)
+        {
+            arrow[j].position.x = obs[j].position.x;
+            arrow[j].position.y = obs[j].position.y;
+            arrow[j].position.z = obs[j].position.z + 4;
         }
-
     }
 
     if (plane.speed * 10 <= 999)
@@ -533,7 +549,6 @@ void tick_elements()
         alt[2].position.y = sc[2].position.y;
         alt[2].position.z = sc[2].position.z;
     }
-
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -549,11 +564,11 @@ void initGL(GLFWwindow *window, int width, int height)
     bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        if(i%2==0)
+        if (i % 2 == 0)
             obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, COLOR_GOLD);
         arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i);
-        if(i%2==1)
-        obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, COLOR_GOLD);
+        if (i % 2 == 1)
+            obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, COLOR_GOLD);
     }
     sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
@@ -564,8 +579,8 @@ void initGL(GLFWwindow *window, int width, int height)
     alt[2] = Score(screen_center_x - 2 + 5, -8, -2, alth, COLOR_BLACK);
 
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
-    sring    = Smokering(0, 200, 10, COLOR_LIGHTGREY);
-    mis      = Missile(0, 4, 0, 0.1, COLOR_FIRE);
+    sring = Smokering(0, 200, 10, COLOR_LIGHTGREY);
+    mis = Missile(0, 4, 0, 0.1, COLOR_FIRE);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -616,8 +631,8 @@ int main(int argc, char **argv)
 
             char titleString[128];
             sprintf(titleString, "Lives: %d", (int)plane.lives);
-           
-            glfwSetWindowTitle(window,titleString);
+
+            glfwSetWindowTitle(window, titleString);
         }
 
         // Poll for Keyboard and mouse events

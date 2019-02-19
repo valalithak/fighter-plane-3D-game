@@ -1,6 +1,7 @@
 #include "obstacle.h"
 #include "main.h"
 #include "missile.h"
+#include "bomb.h"
 Obstacle::Obstacle(float x, float y, float z, color_t color)
 {
     this->position = glm::vec3(x, y, z);
@@ -102,15 +103,32 @@ void Obstacle::set_position(float x, float y, float z)
     this->position = glm::vec3(x, y, z);
 }
 
-bool Obstacle::tick(Missile m)
+bool Obstacle::tick_m(Missile m)
 {
-    float distx = (this->position.x - m.position.x) * (this->position.x - m.position.x);
-    float disty = (this->position.y - m.position.y) * (this->position.y - m.position.y);
-    float distz = (this->position.z - m.position.z) * (this->position.z - m.position.z);
-    float box = 1;
-    if (distx <= box)
-        return true;
-    else
+    if (m.shot)
+    {
+        float distx = (this->position.x - m.position.x) * (this->position.x - m.position.x);
+        float disty = (this->position.y - m.position.y) * (this->position.y - m.position.y);
+        float distz = (this->position.z - m.position.z) * (this->position.z - m.position.z);
+        float box = 1;
+        if (distx <= box)
+            return true;
+        else
 
-        return false;
+            return false;
+    }
+}
+bool Obstacle::tick_b(Bomb b)
+{
+    if (b.appear)
+    {
+        float distx = (this->position.x - b.position.x) * (this->position.x - b.position.x);
+        float disty = (this->position.y - b.position.y) * (this->position.y - b.position.y);
+        float distz = (-this->position.z + b.position.z) * (this->position.z - b.position.z);
+        float box = 1;
+        if (distx <= box && distz <= box)
+            return true;
+        else
+            return false;
+    }
 }
