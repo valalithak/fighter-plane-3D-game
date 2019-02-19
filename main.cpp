@@ -10,6 +10,7 @@
 #include "arrow.h"
 #include "smokering.h"
 #include "missile.h"
+#include "parachute.h"
 
 using namespace std;
 
@@ -32,7 +33,10 @@ Bomb bomb;
 Missile mis;
 Fuel fuel_bar;
 Arrow arrow[NUM_OBSTACLES];
+Arrow direction;
 Smokering sring;
+Parachute par;
+
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
@@ -44,6 +48,11 @@ int altitude = 100;
 int jump = 0;
 int ring_pass = 0;
 int check = 0;
+float to_x = 0;
+float to_y = 0;
+float to_z = 0;
+int bonus  = 0;
+
 
 Timer t60(1.0 / 60);
 
@@ -104,7 +113,7 @@ void draw()
     glm::mat4 MVP; // MVP = Projection * View * Model
 
     // Scene render
-    //fuel_powerup.draw(VP);
+   
 
     water.draw(VP);
     for (int i = 0; i < NUM_OBSTACLES; i++)
@@ -134,6 +143,8 @@ void draw()
                 continue;
         }
     }
+   
+
     if (bomb.appear)
         bomb.draw(VP);
     if (view != 1)
@@ -145,6 +156,10 @@ void draw()
 
     if (fuel_powerup.taken == false)
         fuel_powerup.draw(VP);
+    if(par.shot==false)
+        par.draw(VP);
+    //direction.draw(VP);
+
 }
 
 void tick_input(GLFWwindow *window)
@@ -340,7 +355,8 @@ void tick_input(GLFWwindow *window)
     }
     if (!w)
     {
-        plane.speed -= 0.005;
+        if(score > 10)
+            plane.speed -= 0.005;
     }
 }
 
@@ -350,6 +366,20 @@ void tick_elements()
     // if(fuel<=0.0) {
     //     quit(window);
     // }
+    par.tick();
+
+    // to_x = obs[check].position.x;
+    // to_y = obs[check].position.y;
+    // to_z = obs[check].position.z;
+    
+    // direction.position.x = plane.position.x;
+    // direction.position.y = plane.position.y + 2;
+    // direction.position.z = plane.position.z;
+
+    // float dir_angle = atan((to_y - direction.position.y)/(to_x - direction.position.x))/M_PI*180.0f;
+    // direction.rotation = 90- dir_angle;
+    // cout << direction.rotation << endl;
+
     if (mis.shot == true)
     {
 
@@ -359,6 +389,14 @@ void tick_elements()
             obs[check].shot = true;
             mis.shot = false;
             cout << "missile hit" << endl;
+        }
+        bool coll2 = par.isShot(mis);
+        if (coll2 == true && par.shot == false)
+        {
+            par.shot = true;
+            mis.shot = false;
+            bonus+=10;
+            cout << "parachute hit" << endl;
         }
     }
     if (fuel_powerup.taken == false)
@@ -512,10 +550,10 @@ void initGL(GLFWwindow *window, int width, int height)
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {
         if (i % 2 == 0)
-            obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, COLOR_GOLD);
+            obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, i, COLOR_GOLD);
         arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i);
         if (i % 2 == 1)
-            obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, COLOR_GOLD);
+            obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3,i, COLOR_GOLD);
     }
     sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
@@ -528,6 +566,8 @@ void initGL(GLFWwindow *window, int width, int height)
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
     sring = Smokering(0, 200, 10, COLOR_LIGHTGREY);
     mis = Missile(0, 4, 0, 0.1, COLOR_FIRE);
+    direction = Arrow(0, 0, 0, 0);
+    par       = Parachute(0, 300, 15, 0);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -577,7 +617,7 @@ int main(int argc, char **argv)
             tick_input(window);
 
             char titleString[128];
-            sprintf(titleString, "Lives: %d", (int)plane.lives);
+            sprintf(titleString, "Lives : %d \t Bonus : %d", (int)plane.lives, bonus);
 
             glfwSetWindowTitle(window, titleString);
         }

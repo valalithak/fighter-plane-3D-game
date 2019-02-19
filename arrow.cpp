@@ -103,7 +103,7 @@ void Arrow::draw(glm::mat4 VP) {
     glm::mat4 rotate3    = glm::rotate((float) (180* 3.14159 / 180.0f), glm::vec3(1, 0, 0));
     // No need as coords centered at 0, 0, 0 of cube arouund which we waant to rotate
    //rotate          = rotate * glm::translate(glm::vec3(0, -0.6, 0));
-  
+    printf("here %f\n",this->rotation);
       
     Matrices.model *= (translate*rotate3*rotate*rotate2);
     glm::mat4 MVP = VP * Matrices.model;

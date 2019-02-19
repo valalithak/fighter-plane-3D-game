@@ -2,14 +2,19 @@
 #include "main.h"
 #include "missile.h"
 #include "bomb.h"
-Obstacle::Obstacle(float x, float y, float z, color_t color)
+Obstacle::Obstacle(float x, float y, float z, int index, color_t color)
 {
     this->position = glm::vec3(x, y, z);
     this->shot = false;
-    this->rotation = 0;
+    this->rotation = 90;
+    this->i = index;
+    if (index % 10 == 0)
+        this->volcano = true;
+    else
+        this->volcano = false;
 
-    GLfloat b = 0.5; // basesize = 2b
-    GLfloat h = 0.7; // basesize = 2b
+    GLfloat b = 3; // basesize = 2b
+    GLfloat h = 2; // basesize = 2b
 
     // For 2-d Top view at z = 0
     static const GLfloat base[] = {
@@ -81,8 +86,11 @@ Obstacle::Obstacle(float x, float y, float z, color_t color)
 
     };
 
+
+
     this->object = create3DObject(GL_TRIANGLES, 6, base, color, GL_FILL);
     this->object2 = create3DObject(GL_TRIANGLES, 24, pyramid, color, GL_FILL);
+    
 }
 
 void Obstacle::draw(glm::mat4 VP)
@@ -97,6 +105,7 @@ void Obstacle::draw(glm::mat4 VP)
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object);
     draw3DObject(this->object2);
+   
 }
 void Obstacle::set_position(float x, float y, float z)
 {
