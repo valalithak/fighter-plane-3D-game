@@ -39,6 +39,7 @@ Smokering sring;
 Parachute par;
 Volcano volc[NUM_OBSTACLES];
 
+
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 int view = 0;
@@ -53,9 +54,8 @@ int check = 0;
 float to_x = 0;
 float to_y = 0;
 float to_z = 0;
-int bonus  = 0;
-
-
+int bonus = 0;
+int volcano_flag = 0;
 Timer t60(1.0 / 60);
 
 void draw()
@@ -115,7 +115,6 @@ void draw()
     glm::mat4 MVP; // MVP = Projection * View * Model
 
     // Scene render
-   
 
     water.draw(VP);
     for (int i = 0; i < NUM_OBSTACLES; i++)
@@ -145,7 +144,6 @@ void draw()
                 continue;
         }
     }
-   
 
     if (bomb.appear)
         bomb.draw(VP);
@@ -158,16 +156,16 @@ void draw()
 
     if (fuel_powerup.taken == false)
         fuel_powerup.draw(VP);
-    if(par.shot==false)
+    if (par.shot == false)
         par.draw(VP);
     //direction.draw(VP);
-    for(int i = 0; i<NUM_OBSTACLES; i++)
+    for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        if(i%10==0){
+        if (i % 10 == 0)
+        {
             volc[i].draw(VP);
         }
     }
-
 }
 
 void tick_input(GLFWwindow *window)
@@ -363,7 +361,7 @@ void tick_input(GLFWwindow *window)
     }
     if (!w)
     {
-        if(score > 10)
+        if (score > 10)
             plane.speed -= 0.005;
     }
 }
@@ -371,17 +369,29 @@ void tick_input(GLFWwindow *window)
 void tick_elements()
 {
 
-    // if(fuel<=0.0) {
-    //     quit(window);
-    // }
-
-    
-    for(int i = 0; i<NUM_OBSTACLES; i++)
+    if(plane.lives<=0) {
+        quit(window);
+    }
+    for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        if(i%10==0){
+        if(i%10==0)
+        {
+            bool v = obs[i].Check_NoFlying(plane);
+            if(v)
+            {    
+                cout << "DEAD at "  << altitude << endl;
+                plane.lives--;
+                v = false;
+            }
+        }
+    }
+    for (int i = 0; i < NUM_OBSTACLES; i++)
+    {
+        if (i % 10 == 0)
+        {
             volc[i].position.x = obs[i].position.x;
             volc[i].position.y = obs[i].position.y;
-            volc[i].position.z = obs[i].position.z+3;
+            volc[i].position.z = obs[i].position.z + 3;
         }
     }
     par.tick();
@@ -401,7 +411,7 @@ void tick_elements()
         {
             par.shot = true;
             mis.shot = false;
-            bonus+=10;
+            bonus += 10;
             cout << "parachute hit" << endl;
         }
     }
@@ -430,7 +440,7 @@ void tick_elements()
     bool ring_pass_bool = sring.isPlane(plane);
     if (ring_pass == 0 && ring_pass_bool == 1)
     {
-        plane.lives += 1;
+        bonus += 10;
         ring_pass = 1;
     }
     plane.tick();
@@ -559,7 +569,7 @@ void initGL(GLFWwindow *window, int width, int height)
             obs[i] = Obstacle(-80 + (10 * i), (16 * i), -3, i, COLOR_GOLD);
         arrow[i] = Arrow(2 * i + rand() % 6, -5, -1 * (i + rand() % 2) + 0.5, i);
         if (i % 2 == 1)
-            obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3,i, COLOR_GOLD);
+            obs[i] = Obstacle(30 - (i - NUM_OBSTACLES / 2), 20 * i, -3, i, COLOR_GOLD);
     }
     sc[0] = Score(screen_center_x, -8, -2, scu, COLOR_BLACK);
     sc[1] = Score(screen_center_x - 1, -8, -2, sct, COLOR_BLACK);
@@ -573,14 +583,12 @@ void initGL(GLFWwindow *window, int width, int height)
     sring = Smokering(0, 200, 10, COLOR_LIGHTGREY);
     mis = Missile(0, 4, 0, 0.1, COLOR_FIRE);
     direction = Arrow(0, 0, 0, 0);
-    par       = Parachute(0, 300, 15, 0);
-    
-    for(int i = 0; i<NUM_OBSTACLES; i++)
+    par = Parachute(0, 300, 15, 0);
+
+    for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-            volc[i] = Volcano(0, 0, 0, i);
+        volc[i] = Volcano(0, 0, 0, i);
     }
-
-
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -630,7 +638,7 @@ int main(int argc, char **argv)
             tick_input(window);
 
             char titleString[128];
-            sprintf(titleString, "Lives : %d \t Bonus : %d", (int)plane.lives, bonus);
+            sprintf(titleString, "Bonus : %d", bonus);
 
             glfwSetWindowTitle(window, titleString);
         }

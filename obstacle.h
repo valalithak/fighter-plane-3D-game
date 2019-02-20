@@ -14,6 +14,7 @@ public:
     void set_position(float x, float y, float z);
     bool tick_m(Missile m);
     bool tick_b(Bomb b);
+    bool  Check_NoFlying(Plane p);
     bool shot;
     int i;
     float rotation;

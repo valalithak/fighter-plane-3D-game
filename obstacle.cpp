@@ -119,7 +119,7 @@ bool Obstacle::tick_m(Missile m)
         float distx = (this->position.x - m.position.x) * (this->position.x - m.position.x);
         float disty = (this->position.y - m.position.y) * (this->position.y - m.position.y);
         float distz = (this->position.z - m.position.z) * (this->position.z - m.position.z);
-        float box = 1;
+        float box = 0.05;
         if (distx <= box)
             return true;
         else
@@ -141,3 +141,22 @@ bool Obstacle::tick_b(Bomb b)
             return false;
     }
 }
+
+bool Obstacle::Check_NoFlying(Plane p)
+{
+    if (this->i%10==0)
+    {
+        float distx = (this->position.x - p.position.x) * (this->position.x - p.position.x);
+        float disty = (this->position.y - p.position.y) * (this->position.y - p.position.y);
+        // float distz = (this->position.z - p.position.z) * (this->position.z - p.position.z);
+        //printf("Plane %f %f\n", p.position.x, p.position.y);
+        //printf("Volcano%d %f %f\n",i, this->position.x, this->position.y);
+        float box = 2;
+        if (distx <= 3*box && disty <= 5*box){
+           return true;
+        }
+        else
+            return false;
+    }
+}
+ 
