@@ -24,7 +24,7 @@ GLFWwindow *window;
 **************************/
 #define NUM_OBSTACLES 100
 
-Ball fuel_powerup;
+Ball fuel_powerup[20];
 Plane plane;
 Water water;
 Obstacle obs[NUM_OBSTACLES];
@@ -35,10 +35,9 @@ Missile mis;
 Fuel fuel_bar;
 Arrow arrow[NUM_OBSTACLES];
 Arrow direction;
-Smokering sring;
-Parachute par;
+Smokering sring[10];
+Parachute par[8];
 Volcano volc[NUM_OBSTACLES];
-
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -49,7 +48,7 @@ int altu, altt, alth;
 int fuel = 2000;
 int altitude = 100;
 int jump = 0;
-int ring_pass = 0;
+int ring_pass[100] = {0};
 int check = 0;
 float to_x = 0;
 float to_y = 0;
@@ -149,15 +148,20 @@ void draw()
         bomb.draw(VP);
     if (view != 1)
         plane.draw(VP);
-
-    sring.draw(VP);
+    for (int i = 0; i < 10; i++)
+        sring[i].draw(VP);
     if (mis.shot == true)
         mis.draw(VP);
-
-    if (fuel_powerup.taken == false)
-        fuel_powerup.draw(VP);
-    if (par.shot == false)
-        par.draw(VP);
+    for (int i = 0; i < 20; i++)
+    {
+        if (fuel_powerup[i].taken == false)
+            fuel_powerup[i].draw(VP);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        if (par[i].shot == false)
+            par[i].draw(VP);
+    }
     //direction.draw(VP);
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {
@@ -199,14 +203,6 @@ void tick_input(GLFWwindow *window)
     if (d)
         plane.pitch += 1;
 
-    if (altitude > 110)
-    {
-        plane.gravity = true;
-    }
-    if (altitude <= 110)
-    {
-        plane.gravity = false;
-    }
     if (space)
         plane.loopback = true;
 
@@ -233,6 +229,8 @@ void tick_input(GLFWwindow *window)
     {
 
         altitude -= 3;
+        if (altitude < 100)
+            altitude = 100;
 
         plane.position.z -= plane.speed / 20;
         if (view == 0)
@@ -326,13 +324,13 @@ void tick_input(GLFWwindow *window)
     {
         plane.speed += 0.01;
         float a = (plane.yaw * 3.14) / 180;
-        plane.position.y += 0.1 * cos(a);
-        plane.position.x -= 0.1 * sin(a);
+        plane.position.y += 0.2 * cos(a);
+        plane.position.x -= 0.2 * sin(a);
         if (view == 0)
         {
-            sc[0].position.x -= 0.1 * sin(a);
-            sc[1].position.x -= 0.1 * sin(a);
-            sc[2].position.x -= 0.1 * sin(a);
+            sc[0].position.x -= 0.2 * sin(a);
+            sc[1].position.x -= 0.2 * sin(a);
+            sc[2].position.x -= 0.2 * sin(a);
             if (cos(a) > 0)
             {
                 sc[0].position.y = plane.position.y - 5 * cos(a) - 5;
@@ -369,17 +367,18 @@ void tick_input(GLFWwindow *window)
 void tick_elements()
 {
 
-    if(plane.lives<=0) {
+    if (plane.lives <= 0)
+    {
         quit(window);
     }
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {
-        if(i%10==0)
+        if (i % 10 == 0)
         {
             bool v = obs[i].Check_NoFlying(plane);
-            if(v)
-            {    
-                cout << "DEAD at "  << altitude << endl;
+            if (v)
+            {
+                // cout << "DEAD at "  << altitude << endl;
                 plane.lives--;
                 v = false;
             }
@@ -394,7 +393,8 @@ void tick_elements()
             volc[i].position.z = obs[i].position.z + 3;
         }
     }
-    par.tick();
+    for (int i = 0; i < 8; i++)
+        par[i].tick();
 
     if (mis.shot == true)
     {
@@ -406,24 +406,30 @@ void tick_elements()
             mis.shot = false;
             cout << "missile hit" << endl;
         }
-        bool coll2 = par.isShot(mis);
-        if (coll2 == true && par.shot == false)
+        for (int i = 0; i < 8; i++)
         {
-            par.shot = true;
-            mis.shot = false;
-            bonus += 10;
-            cout << "parachute hit" << endl;
+            bool coll2 = par[i].isShot(mis);
+            if (coll2 == true && par[i].shot == false)
+            {
+                par[i].shot = true;
+                mis.shot = false;
+                bonus += 10;
+                cout << "parachute hit" << endl;
+            }
         }
     }
-    if (fuel_powerup.taken == false)
+    for (int i = 0; i < 20; i++)
     {
-
-        bool coll = fuel_powerup.tick_plane(plane);
-        if (coll == true)
+        if (fuel_powerup[i].taken == false)
         {
-            fuel_powerup.taken = true;
-            fuel = 2000;
-            cout << "fuelled" << endl;
+
+            bool coll = fuel_powerup[i].tick_plane(plane);
+            if (coll == true)
+            {
+                fuel_powerup[i].taken = true;
+                fuel = 2000;
+                cout << "fuelled" << endl;
+            }
         }
     }
     if (bomb.appear == true)
@@ -437,11 +443,16 @@ void tick_elements()
             cout << "bomb hit" << endl;
         }
     }
-    bool ring_pass_bool = sring.isPlane(plane);
-    if (ring_pass == 0 && ring_pass_bool == 1)
+
+    for (int i = 0; i < 10; i++)
     {
-        bonus += 10;
-        ring_pass = 1;
+        bool ring_pass_bool = sring[i].isPlane(plane);
+        if (ring_pass[i] == 0 && ring_pass_bool == 1)
+        {
+            bonus += 10;
+            ring_pass[i] = 1;
+        }
+        // ring_pass = 0;
     }
     plane.tick();
     if (bomb.appear)
@@ -558,8 +569,8 @@ void initGL(GLFWwindow *window, int width, int height)
 {
     /* Objects should be created before any other gl function and shaders */
     // Create the models
-
-    fuel_powerup = Ball(-3, 25, COLOR_YELLOW);
+    for (int i = 0; i < 20; i++)
+        fuel_powerup[i] = Ball(15 * i % rand() % 50, 50 * i, COLOR_YELLOW);
     water = Water(0, 0, COLOR_WATER);
     plane = Plane(0, 0, 0, COLOR_GREY, COLOR_GREY);
     bomb = Bomb(0, 0, 0, 0.5, COLOR_BLACK);
@@ -580,10 +591,12 @@ void initGL(GLFWwindow *window, int width, int height)
     alt[2] = Score(screen_center_x - 2 + 5, -8, -2, alth, COLOR_BLACK);
 
     fuel_bar = Fuel(screen_center_x, -10, -2, fuel, COLOR_GREEN, COLOR_DARKRED);
-    sring = Smokering(0, 200, 10, COLOR_LIGHTGREY);
+    for (int i = 0; i < 10; i++)
+        sring[i] = Smokering(18 * i % rand() % 60, 200 + 25 * i, 10, COLOR_LIGHTGREY);
     mis = Missile(0, 4, 0, 0.1, COLOR_FIRE);
     direction = Arrow(0, 0, 0, 0);
-    par = Parachute(0, 300, 15, 0);
+    for (int i = 0; i < 8; i++)
+        par[i] = Parachute((29* (i+1))%rand()%19, 200 * i, 15, 0);
 
     for (int i = 0; i < NUM_OBSTACLES; i++)
     {

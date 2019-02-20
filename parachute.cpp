@@ -10,7 +10,7 @@ Parachute::Parachute(float x, float y, float z, int index) {
     float theta = 0;
 
     long long int i;
-    this->height = 3;
+    this->height = 4;
     this-> R = 1;
     this->r = 3;
 
@@ -93,7 +93,7 @@ bool Parachute::isShot(Missile m)
         float distx = (this->position.x - m.position.x) * (this->position.x - m.position.x);
         float disty = (this->position.y - m.position.y) * (this->position.y - m.position.y);
         float distz = (this->position.z - m.position.z) * (this->position.z - m.position.z);
-        float box = 1;
+        float box = 2;
         if (distx <= box && disty <= box)
             return true;
         else

@@ -12,7 +12,7 @@ Volcano::Volcano(float x, float y, float z, int index) {
     long long int i;
     this->height = 1;
     this-> R = 0.5;
-    this->r = 2;
+    this->r = 4;
 
     for (i = 0; i < 18 * n; i += 18) {
         volc[i] = this->r * cos(theta);

@@ -13,8 +13,8 @@ Obstacle::Obstacle(float x, float y, float z, int index, color_t color)
     else
         this->volcano = false;
 
-    GLfloat b = 3; // basesize = 2b
-    GLfloat h = 2; // basesize = 2b
+    GLfloat b = 5; // basesize = 2b
+    GLfloat h = 3; // basesize = 2b
 
     // For 2-d Top view at z = 0
     static const GLfloat base[] = {
