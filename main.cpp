@@ -11,6 +11,7 @@
 #include "smokering.h"
 #include "missile.h"
 #include "parachute.h"
+#include "volcano.h"
 
 using namespace std;
 
@@ -36,6 +37,7 @@ Arrow arrow[NUM_OBSTACLES];
 Arrow direction;
 Smokering sring;
 Parachute par;
+Volcano volc[NUM_OBSTACLES];
 
 float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -159,6 +161,12 @@ void draw()
     if(par.shot==false)
         par.draw(VP);
     //direction.draw(VP);
+    for(int i = 0; i<NUM_OBSTACLES; i++)
+    {
+        if(i%10==0){
+            volc[i].draw(VP);
+        }
+    }
 
 }
 
@@ -366,19 +374,17 @@ void tick_elements()
     // if(fuel<=0.0) {
     //     quit(window);
     // }
-    par.tick();
 
-    // to_x = obs[check].position.x;
-    // to_y = obs[check].position.y;
-    // to_z = obs[check].position.z;
     
-    // direction.position.x = plane.position.x;
-    // direction.position.y = plane.position.y + 2;
-    // direction.position.z = plane.position.z;
-
-    // float dir_angle = atan((to_y - direction.position.y)/(to_x - direction.position.x))/M_PI*180.0f;
-    // direction.rotation = 90- dir_angle;
-    // cout << direction.rotation << endl;
+    for(int i = 0; i<NUM_OBSTACLES; i++)
+    {
+        if(i%10==0){
+            volc[i].position.x = obs[i].position.x;
+            volc[i].position.y = obs[i].position.y;
+            volc[i].position.z = obs[i].position.z+3;
+        }
+    }
+    par.tick();
 
     if (mis.shot == true)
     {
@@ -568,6 +574,13 @@ void initGL(GLFWwindow *window, int width, int height)
     mis = Missile(0, 4, 0, 0.1, COLOR_FIRE);
     direction = Arrow(0, 0, 0, 0);
     par       = Parachute(0, 300, 15, 0);
+    
+    for(int i = 0; i<NUM_OBSTACLES; i++)
+    {
+            volc[i] = Volcano(0, 0, 0, i);
+    }
+
+
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
